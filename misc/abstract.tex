@@ -1,0 +1,30 @@
+Software engineering is a diverse field that focuses on addressing various business domain problems.
+These domain-specific issues and their corresponding use cases necessitate in-depth analysis to determine
+the most suitable technologies for achieving optimal problem-solving outcomes.
+One rapidly growing area in software engineering is big data.
+Although big data is sometimes regarded as a marketing term, it encompasses complex data processing frameworks and datasets.
+
+As the volume of produced data has dramatically increased over the years,
+modern technical solutions capable of processing massive amounts of data are required.
+The open-source community offers a decent frameworks and tools, making it challenging to choose the best option.
+This research focuses on comparing the most suitable frameworks for specific use cases,
+particularly those that designed for stateful real-time stream processing.
+
+Stream processing use cases are relatively rare compared to typical problems that can often
+be solved with traditional batch processing or simple program which doesn't require MapReduce
+model or DAG.
+However, stateful stream processing assumes that real-time processing relies on previous states,
+and unbounded data flow which may indicate abnormal system behavior, such as fraud alerts in financial transactions
+within a specific time frame.
+Quick response can facilitate necessary actions and save time.
+Therefore, it is crucial to provide a technical analysis of the most suitable frameworks,
+assess their advantages and disadvantages, and examine the complexities involved in their
+application for stateful stream processing based on given use case.
+This master's thesis offers a technical overview,
+benchmarks, and comparisons for appropriate use cases.
+The use case examines considers that each incoming event triggers state re-computation and
+evaluates how efficiently Kafka Streams and Apache Flink manage state under heavy loads,
+represented by a stream of Kafka messages.
+The ideal framework should address existing problems while offering excellent scalability,
+fault tolerance, and cost efficiency.
+This master's thesis aims to provide an answer and a technical overview based on the given requirements.

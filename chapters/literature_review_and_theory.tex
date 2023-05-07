@@ -550,3 +550,17 @@ have a different parallelism setup.
 
 As a summary two processing Apache Flink units with 2 slots provide parallelism with factor 4,
 however Kafka Streams would require 4 processing units.
+
+\subsection{State management}\label{subsec:state-management}
+One of the requirement for the streaming processing solution is exactly-once semantics.
+Both frameworks allow to implement a stream processing with exactly-once semantics,
+but it might by challenging for failure recover cases since Kafka Streams and
+Apache Flink keep state in its recovery differently.
+
+\begin{description}
+    \item[Kafka Streams] uses kafka topics to keep and manage states.
+    It provides a great advantage for recovery cases since topics
+    are distributed, another Kafka Streams instance can take responsibility
+    of a state which was being processing in failed processing unit.
+    \item[Apache Flink]
+\end{description}

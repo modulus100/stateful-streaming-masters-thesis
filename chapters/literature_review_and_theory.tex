@@ -594,7 +594,11 @@ Apache Flink handle the state differently.
     across multiple JobManager instances.
 
     In this case Kafka Streams is also has an advantage, in case of replication is required.
-    But it doesn't mean that Apache Flink can't have replicas, just additional setup is needed.
+    But it doesn't mean that Apache Flink can't have replicas, but additional setup is needed
+    and always needed, since recovery functionality might be effective enough to manage
+    failures.
+    Replications bring additional cost.
+
     \item[Recovery]
     Kafka Streams: In case of a failure, the stream task is reassigned to another running instance.
     The new instance restores the state store by consuming the corresponding changelog topic

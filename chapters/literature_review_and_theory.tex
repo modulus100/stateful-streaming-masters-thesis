@@ -559,7 +559,7 @@ Apache Flink handle the state differently.
 
 \begin{description}
     \item[State Storage]
-    Kafka Streams: Uses state stores, which can be backed by RocksDB,
+    Kafka Streams uses state stores, which can be backed by RocksDB,
     an in-memory store, or a custom implementation.
     For each state store, a corresponding changelog topic is created
     in the Kafka cluster to persist state changes.
@@ -567,7 +567,7 @@ Apache Flink handle the state differently.
     Log compaction is used to retain the latest value for each key,
     ensuring efficient state restoration.
 
-    Apache Flink: Utilizes state backends, such as in-memory,
+    Apache Flink utilizes state backends, such as in-memory,
     RocksDB, or custom implementations, to store application state.
     Checkpoints and savepoints are used to persist the state
     in a distributed and fault-tolerant storage system (e.g., HDFS or S3).
@@ -586,7 +586,7 @@ Apache Flink handle the state differently.
     State size for the research use case is in KB ranges.
     \newpage
     \item[Replication]
-    Kafka Streams: Can be configured to maintain standby replicas of local state stores,
+    Kafka Streams can be configured to maintain standby replicas of local state stores,
     which continuously consume from the changelog topics to minimize downtime during failures.
     Apache Flink: Does not have standby replicas by default.
     However, it can be configured with High Availability (HA) setups that use ZooKeeper
@@ -600,11 +600,11 @@ Apache Flink handle the state differently.
     Replications bring additional cost.
 
     \item[Recovery]
-    Kafka Streams: In case of a failure, the stream task is reassigned to another running instance.
+    In case of a failure in Kafka Streams pipeline, the stream task is reassigned to another running instance.
     The new instance restores the state store by consuming the corresponding changelog topic
     from the last committed offset.
 
-    Apache Flink: In case of a failure, Flink automatically recovers the application
+    In case of a failure in Apache Flink pipeline, Flink automatically recovers the application
     state from the latest completed checkpoint and restarts the application,
     resuming processing from the point in time when the checkpoint was taken.
 

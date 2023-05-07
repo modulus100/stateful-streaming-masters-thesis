@@ -555,12 +555,66 @@ however Kafka Streams would require 4 processing units.
 One of the requirement for the streaming processing solution is exactly-once semantics.
 Both frameworks allow to implement a stream processing with exactly-once semantics,
 but it might by challenging for failure recover cases since Kafka Streams and
-Apache Flink keep state in its recovery differently.
+Apache Flink handle the state differently.
 
 \begin{description}
-    \item[Kafka Streams] uses kafka topics to keep and manage states.
-    It provides a great advantage for recovery cases since topics
-    are distributed, another Kafka Streams instance can take responsibility
-    of a state which was being processing in failed processing unit.
-    \item[Apache Flink]
+    \item[State Storage]
+    Kafka Streams: Uses state stores, which can be backed by RocksDB,
+    an in-memory store, or a custom implementation.
+    For each state store, a corresponding changelog topic is created
+    in the Kafka cluster to persist state changes.
+    Kafka Streams writes state updates to the changelog topics in Kafka.
+    Log compaction is used to retain the latest value for each key,
+    ensuring efficient state restoration.
+
+    Apache Flink: Utilizes state backends, such as in-memory,
+    RocksDB, or custom implementations, to store application state.
+    Checkpoints and savepoints are used to persist the state
+    in a distributed and fault-tolerant storage system (e.g., HDFS or S3).
+    Apache Flink periodically takes checkpoints of the application state
+    and stores them in external storage.
+    Flink also supports asynchronous and incremental checkpointing to
+    minimize performance impact and storage overhead.
+
+    However, Kafka streams might have an advantage in case of requirement for
+    a cloud independence since S3 is provided by AWS.
+    Setting up HDFS requires additional setup and whereas Kafka Streams
+    uses Kafka infrastructure where states are distributed by default and
+    doesn't need additional setup.
+    Having periodical checkpoints might be also tricky for some cases, since recovery time
+    depends on checkpoint period.
+    State size for the research use case is in KB ranges.
+    \newpage
+    \item[Replication]
+    Kafka Streams: Can be configured to maintain standby replicas of local state stores,
+    which continuously consume from the changelog topics to minimize downtime during failures.
+    Apache Flink: Does not have standby replicas by default.
+    However, it can be configured with High Availability (HA) setups that use ZooKeeper
+    or other coordination services to maintain consistent application state
+    across multiple JobManager instances.
+
+    In this case Kafka Streams is also has an advantage, in case of replication is required.
+    But it doesn't mean that Apache Flink can't have replicas, just additional setup is needed.
+    \item[Recovery]
+    Kafka Streams: In case of a failure, the stream task is reassigned to another running instance.
+    The new instance restores the state store by consuming the corresponding changelog topic
+    from the last committed offset.
+
+    Apache Flink: In case of a failure, Flink automatically recovers the application
+    state from the latest completed checkpoint and restarts the application,
+    resuming processing from the point in time when the checkpoint was taken.
+
+    However, if data source is Kafka, then it means that committed offset for message queue
+    keeps a pointed to a last successfully read message.
+    Flink can keep committed offset during the last successful checkpoints save.
+    Once Apache Flink job is recovered it will be able to read staying messages,
+    therefore state in Flink won't be lost.
+    The less frequent checkpoint save time the more messages will have to be replayed.
+    Finding a balance between saving frequency and recovery is an important step.
+
 \end{description}
+
+In summary, both Kafka Streams and Apache Flink provide flexible recovery strategies
+for stateful stream processing.
+However, there must be a tradeoff defined between recovery time, solution cost and
+technical capabilities of engineering team.

@@ -502,6 +502,51 @@ infrastructure, needed features are presented and huge community support.
 
 \newpage
 \section{Comparing Kafka Streams and Apache Flink}\label{sec:kafka-vs-flink}
-In this section I'll be comparing main features between Kafka Streams and Apache Flink
-which are important for the use case.
-It's supposed to
+In this section Kafka Streams and Apache Flink are compared for their
+feature set which are important for the use case.
+It might be to that trivial task consider how well they behave and are considered as
+industry standards for stateful streaming.
+
+
+\subsection{Input and Output}\label{subsec:input-and-output}
+When considering frameworks, one of the first requirement comes
+with integration possibilities.
+Fortunately, modern data processing frameworks come with a set of
+input output integration modules.
+This set if different depending on framework.
+
+\begin{description}
+    \item[Kafka Streams] fully relies on Kafka.
+    Kafka Streams always uses kafka topic as input and kafka topic as output.
+    It means that any kind of integration, either database, or csv data, it must
+    be transformed to kafka topic.
+    Kafka provides a set of kafka connect modules which provide an integration with
+    different sources, but it takes additional kafka resources and kafka connect setup.
+    For research use case, the data is coming from a kafka topic which makes it ease to use.
+    \item[Apache Flink] supports different kinds of data sources byt built it functionality,
+    moreover Flink functionality provide a transactional data source integration.
+    Flink provides wider options for native data source integration which makes it
+    a good choise if custom data source is required.
+\end{description}
+
+Since research use case uses Kafka as a data source both
+Kafka Streams and Apache Flink would fit well.
+
+
+\subsection{Parallelism}\label{subsec:topology}
+Both Kafka Streams and Apache Flink use a dataflow graphs, but they
+have a different parallelism setup.
+
+\begin{description}
+    \item[Kafka Streams] uses dataflow graph topology which provides a great scalability.
+    To make stream processing scalable, it's required to have more parallel application
+    processing units.
+    Where each pod is responsible for a set of partitions defined by Kafka brokers.
+    \item[Apache Flink] uses dataflow graph topology but provides different
+    parallelism model, which is mode advanced comparing to Kafka Streams.
+    Flink provide processing slots with the task manager, such that, Flink
+    allows to set up parallelism within a processing unit and parallel processing units.
+\end{description}
+
+As a summary two processing Apache Flink units with 2 slots provide parallelism with factor 4,
+however Kafka Streams would require 4 processing units.

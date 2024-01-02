@@ -333,17 +333,6 @@ In order to deploy build images two cli tools were used.
 \end{description}
 
 
-%\begin{lstlisting}[label={lst:ecr-example}]
-%aws ecr get-login-password --region aws-region-name |
-%docker login --username AWS --password-stdin aws-account-id
-%docker buildx build -t ecr-name . --platform=linux/amd64 --push
-%\end{lstlisting}
-
-%The code snippet above ~\ref{lst:ecr-example} is an example of how to deploy built docker image
-%to ECR for linux/amd64 platform.
-
-%\newpage
-
 \subsection{Rule Based Matcher}\label{subsec:rule-matcher}
 
 \begin{figure}[H]

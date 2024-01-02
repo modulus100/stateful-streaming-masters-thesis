@@ -1,0 +1,53 @@
+\section{Interpretation of Results}\label{sec:interpretation-of-results}
+This research is focusing on 3 metrics, which are input rate, output rate and consumer group lag.
+Streaming prototypes which were benchmarked have two main characteristics, which are
+input/output interfaces and processing performance.
+Such results give a general performance overview of the system.
+Further research could be focused on specific metrics.
+The reason behind selecting 10000 rules and selectivity of 0.00002 is a
+simulation of a real production system.
+The main reason for using number of replicas between 10 and 12 for experiments
+was to find out a performance difference in case of different Java versions and replicas shortage.
+For instance, if one of Java versions would perform significantly better, then
+it's possible to reduce a number of replicas for the same workload and save
+solution costs.
+In ideal solution a consumer group commit lag must never grow but
+jumping between 0 and n, where n.
+The higher n is, the bigger delay is as well.
+For a real production systems, commit interval and number of replicase
+obviously will have to be tuned depending on the requirements.
+If the system is able to process the load, then consumer group lag never grow.
+But in order to avoid 30 seconds delay, even if the system performs well,
+it's important to adjust Kafka commit period, for example make it 10 or 20 seconds.
+
+Fault tolerance benchmark was done with Java 21, because such metric is
+focused on general system behaviour of a state recovery time rather than on Java version,
+however there is still could be some performance difference.
+The main metric of a state recovery time could be defined as a period of a time,
+from replica kill to a start of stabilized consumer group commit, when it doesn't
+change anymore.
+
+Another motivational aspect is a release of Java 21.
+It's curious if Java 21 could produce a significant performance difference.
+
+The biggest different for Apache Flink and Kafka Streams implementation is output.
+Apache Flink sends each processed event to the output topic right after process single record,
+whereas Kafka Streams implementation aggregates many records first and sends aggregated
+records to the output topic.
+This is a main reason why Kafka Streams has less MPS in output, and they get send
+in interval whereas Apache Flink streams them constantly, without periods.
+Both solutions use at least once semantics, which is a default.
+
+\section{Comparison with Existing Literature}\label{sec:comparison-with-existing-literature}
+Experiments with the matched service are also been researched by Dynatrace research
+group in collaboration with JKU University. \cite{kleppmann2017}, \cite{kafka2020}, \cite{confluent2023}
+The research could be found here \cite{ICPE2024}.
+
+\section{Implications of Findings}\label{sec:implications-of-findings}
+Discuss the broader implications of your results, particularly in the context of Apache Flink and Kafka Streams.
+
+\section{Limitations of the Study}\label{sec:limitations-of-the-study}
+Acknowledge any limitations in your research approach or data
+
+\section{Suggestions for Future Research}\label{sec:suggestions-for-future-research}
+Offer recommendations for further study in this area.

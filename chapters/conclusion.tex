@@ -1,0 +1,40 @@
+\section{Recap of the Research}\label{sec:recap-of-the-research}
+First at all, it needs to be mentioned that periodic batch processing job
+is might not be that scalable and fault-tolerant as modern
+stream processing frameworks.
+Stream processing can replace and should replace solutions which require
+a continuous stream processing with a minimal latency.
+Proper configuration and replica size significantly reduces latency comparing
+to periodic batch processing solutions.
+However, it also helps batch processing to reduce network load.
+But having Kafka interface, a requirement in low latency and fault tolerance,
+stream processing solutions win.
+
+\section{Concluding Thoughts}\label{sec:concluding-thoughts}
+Both Kafka Streams and Apache Flink demonstrate incredible performance
+and state recovery in case of replicas restoration.
+Apache Flink show better performance for in case of a high load
+and cpu extensive operations which makes Flink preferable
+option for heavy loaded systems.
+With better performance Flink requires deep knowledge in Flink
+API and its maintenance and working modes.
+It definitely requires a developer to learn additional technologies and documentation.
+Flink has an awesome community which is quite helpful with problems,
+for example Flink community Slack channel.
+Since Apache Flink is a part of Confluent, there are more and more tutorials
+being added for Flink which makes it learning more efficient.
+Kafka Streams cannot fully replace Flink, and it certainly has its own niche.
+
+Another important difference between Apache Flink and Kafka Streams which
+may affect a preference is Flink's ability to work with any kind of data
+sources, but Kafka Streams is specifically designed for Kafka.
+Apache Flink also has a native Python support, which allows Flink
+to be used with existing Python libraries, for almost any use case.
+
+\section{Practical Applications}\label{sec:practical-applications}
+The most usable use case for Flink is real time data analytics \cite{flink_use_cases}.
+Flink is actively used with real time machine learning algorithms, for
+real time predictions having different integration with Python ML libraries
+or with Java based FlinkML \cite{flink_ml}.
+Both Flink and Kafka Streams could be used for real time Fraud detection
+and IoT solutions, processing thousands or even millions of data sources.

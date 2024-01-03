@@ -1,16 +1,3 @@
-@misc{example-reference,
-    author    = "L. Masinter",
-    title     = "Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0)",
-    url       = "https://tools.ietf.org/html/rfc2324",
-    note      = "[Accessed: 24-05-2019]"
-}
-@inproceedings{spectre,
- author = {Paul Kocher and Jann Horn and Anders Fogh and Daniel Genkin and Daniel Gruss and Werner Haas and Mike Hamburg and Moritz Lipp and Stefan Mangard and Thomas Prescher and Michael Schwarz and Yuval Yarom},
- title = {Spectre Attacks: Exploiting Speculative Execution},
- booktitle = {40th IEEE Symposium on Security and Privacy (S\&P'19)},
- year = {2019},
-}
-
 @inproceedings{ICPE2024,
     author = {Henning, Sören and Vogel, Adriano and Leichtfried, Michael and Ertl, Otmar and Rabiser, Rick},
     title = {{ShuffleBench}: A Benchmark for Large-Scale Data Shuffling Operations with Distributed Stream Processing Frameworks},
@@ -29,7 +16,6 @@
     year = {2017},
     isbn = {978-1449373320}
 }
-
 
 @book{kafka2020,
     author = {Gwen Shapira and Neha Narkhede and Todd Palino},
@@ -55,3 +41,194 @@
     url = {https://www.confluent.io/blog/design-and-deployment-considerations-for-deploying-apache-kafka-on-aws/},
     note = {Accessed on: 01/02/2024}
 }
+
+
+// general overview
+@online{stream_processing_frameworks_overview,
+    author = {Chandan Prakash},
+    title = {Spark Streaming vs Flink vs Storm vs Kafka Streams vs Samza : Choose Your Stream Processing Framework},
+    year = {2018},
+    url = {urhttps://www.linkedin.com/pulse/spark-streaming-vs-flink-storm-kafka-streams-samza-choose-prakash},
+}
+
+// real time consumers
+@article{scalability_frameworks,
+    author = {Sören Henning and Wilhelm Hasselbring},
+    title = {Benchmarking scalability of stream processing frameworks deployed as microservices in the cloud},
+    journal = {Journal of Systems and Software},
+    year = {2024},
+    volume = {208},
+    doi = {10.1016/j.jss.2023.111879}
+}
+
+// theodolite framework and benchmarks
+@article{theodolite_framework,
+    author = {Sören Henning and Wilhelm Hasselbring},
+    title = {Theodolite: Scalability Benchmarking of Distributed Stream Processing Engines in Microservice Architectures},
+    journal = {ResearchGate},
+    year = {2021},
+    volume = {208},
+    doi = {10.1016/j.bdr.2021.100209}
+}
+
+// theodolite framework and benchmarks
+@article{applications_benhcmarks,
+    author = {Sören Henning and Wilhelm Hasselbring},
+    title = {A configurable method for benchmarking scalability of cloud-native applications},
+    journal = {Empirical Software Engineering},
+    year = {2022},
+    volume = {27},
+    doi = {10.1007/s10664-022-10162-1}
+}
+
+// cpu metrics
+@inproceedings{inoubli2018comparative,
+    title={A Comparative Study on Streaming Frameworks for Big Data},
+    author={Inoubli, Wissem and Aridhi, Sabeur and Mezni, Haithem and Maddouri, Mondher and Nguifo, Engelbert Mephu},
+    booktitle={Proceedings of the Latin America Data Science Workshop (LADaS 2018)},
+    year={2018},
+    organization={LADaS}
+}
+
+// single core cpu perforamnce
+@online{flink_spark_vervica_2,
+    author = {Aljoscha Krettek},
+    title = {The Curious Case of the Broken Benchmark: Revisiting Apache Flink® vs. Databricks Runtime},
+    year = {2017},
+    url = {https://www.ververica.com/blog/curious-case-broken-benchmark-revisiting-apache-flink-vs-databricks-runtime},
+    note = {Accessed on: 01/02/2024}
+}
+
+@book{java_jvm,
+    author = {Maaike van Putten (Author) and Sean Kennedy},
+    title = {Java Memory Management: A comprehensive guide to garbage collection and JVM tuning},
+    publisher = {Packt Publishing},
+    year = {2022},
+    isbn = {978-1801812856}
+}
+
+@book{java_jvm_oracle,
+    author = {Cay Horstmann},
+    title = {Core Java: Advanced Features, Volume 2},
+    publisher = {Oracle Press},
+    year = {2022},
+    isbn = {978-0137871070}
+}
+
+@online{usafe_usage,
+    title = {Java Magic. Part 4: sun.misc.Unsafe},
+    year = {2013},
+    url = {https://mishadoff.com/blog/java-magic-part-4-sun-dot-misc-dot-unsafe/},
+    note = {Accessed on: 01/02/2024}
+}
+
+@online{usafe_usage_2,
+    title = {Usage of class sun.misc.Unsafe},
+    author = {Lokesh Gupta},
+    year = {2013},
+    url = {https://howtodoinjava.com/java-examples/usage-of-class-sun-misc-unsafe/},
+    note = {Accessed on: 01/02/2024}
+}
+
+@online{java_21_new_gc,
+    title = {JEP 439: Generational ZGC},
+    author = {Stefan Karlsson},
+    year = {2013},
+    url = {https://openjdk.org/jeps/439},
+    note = {Accessed on: 01/02/2024}
+}
+
+@inproceedings{flinkCheckpoints,
+    title={Lightweight Asynchronous Snapshots for Distributed Dataflows},
+    author={Paris Carbone and Gyula Fóra and Stephan Ewen and Seif Haridi and Kostas Tzoumas},
+    year={2015},
+    journal = {arXiv preprint arXiv:1506.08603},
+    url = {https://arxiv.org/abs/1506.08603}
+}
+
+
+@online{flink_checkpoints_flink,
+    title = {Flink Checkpoints},
+    url = {https://nightlies.apache.org/flink/flink-docs-release-1.18/docs/ops/state/large_state_tuning/},
+    note = {Accessed on: 01/02/2024}
+}
+
+
+@online{flink_windows,
+    title = {Windows},
+    url = {https://nightlies.apache.org/flink/flink-docs-release-1.18/docs/dev/datastream/operators/windows/},
+    note = {Accessed on: 01/02/2024}
+}
+
+@online{kafka_streams_windows,
+    title = {Apache Kafka Beyond the Basics: Windowing},
+    url = {https://www.confluent.io/blog/windowing-in-kafka-streams/},
+    note = {Accessed on: 01/02/2024},
+    author = {Lucia Cerchie},
+}
+
+@article{gencer2021hazelcast,
+    title={Hazelcast Jet: Low-latency Stream Processing at the 99.99th Percentile},
+    author={Gencer, Can and Topolnik, Marko and Ďurina, Viliam and Demirci, Emin and Doğan, Mehmet},
+    journal={arXiv preprint arXiv:2103.10169},
+    year={2021},
+    url={https://arxiv.org/abs/2103.10169}
+}
+
+
+@online{hazelcase_gc_concerns,
+    title = {Concerns Related to GC},
+    url = {https://jet-start.sh/docs/operations/gc-concerns},
+    note = {Accessed on: 01/02/2024}
+}
+
+@online{flink_kubernetes_operator,
+    title = {Flink Kubernetes Operator},
+    url = {https://nightlies.apache.org/flink/flink-kubernetes-operator-docs-stable/},
+    note = {Accessed on: 01/02/2024}
+}
+
+@online{flink_use_cases,
+    title = {Flink Use Cases},
+    url = {https://flink.apache.org/what-is-flink/use-cases/},
+    note = {Accessed on: 01/02/2024}
+}
+
+@online{flink_ml,
+    title = {Flink ML},
+    url = {https://nightlies.apache.org/flink/flink-ml-docs-release-2.3/docs/try-flink-ml/java/quick-start/},
+    note = {Accessed on: 01/02/2024}
+}
+
+@book{kleppmann2016making,
+    title={Making Sense of Stream Processing},
+    author={Kleppmann, Martin},
+    isbn={9781491937280},
+    year={2016},
+    publisher={O'Reilly Media, Inc.}
+}
+
+@book{map_reduce,
+    title={Big Data with Hadoop MapReduce: A Classroom Approach},
+    author={Rathinaraja Jeyaraj and Ganeshkumar Pugalendhi and Anand Paul},
+    isbn={978-1771888349},
+    year={2020},
+    publisher={O'Reilly Media, Inc.}
+}
+
+@book{hightower2019kubernetes,
+    title={Kubernetes: Up and Running},
+    author={Hightower, Kelsey and Burns, Brendan and Beda, Joe},
+    isbn={9781492046530},
+    year={2019},
+    publisher={O'Reilly Media, Inc.}
+}
+
+@book{pivotto2023prometheus,
+    title={Prometheus: Up \& Running},
+    author={Pivotto, Julien and Brazil, Brian},
+    isbn={9781098131142},
+    year={2023},
+    publisher={O'Reilly Media, Inc.}
+}
+

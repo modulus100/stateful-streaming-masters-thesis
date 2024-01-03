@@ -37,7 +37,8 @@ real time metrics.
 
 One of the most important step is a data analysis, which is also possible using Theodolite framework
 since it provides metrics export interface.
-All the recorded metrics will be analysed using Python libraries and tools.
+All the recorded metrics will be analysed using Python libraries and tools
+\cite{hightower2019kubernetes}, \cite{pivotto2023prometheus}, \cite{theodolite_framework}.
 
 
 \subsection{Research Objectives}\label{sec:research-objectives}
@@ -68,12 +69,6 @@ and Kafka Streams, since Flink requires additional steps to get the Flink cluste
 Especially it's fascinating with the brand new Flink Kubernetes operator release.
 It supposed to dramatically simplify operations of the Flink cluster, and it's cloud configuration.
 Moreover, the latest Flink Kubernetes Operator release supports the autoscaling functionality out of the box.
-
-%\newpage
-%
-%
-%
-%\newpage
 
 
 \section{Experimental Setup}\label{sec:exp-setup}
@@ -202,7 +197,7 @@ each broker run only on a separate node to make predictable and balanced cpu, me
 resources consumption.
 The node type d2.xlarge is suggested to be used for nodes without Amazon EBS by Confluent.
 Since experiments are not supposed to be running 24/7 in production, it's sufficient to take node
-with internal storage.
+with internal storage \cite{confluent2023}.
 
 
 \begin{table}[h]
@@ -440,7 +435,8 @@ Theodolite also contains an operator which manages benchmarks deployment,
 configurations and runtime.
 
 For each experiment there is set of Kubernetes resource files which get installed
-with one sh file.
+with one sh file \cite{theodolite_framework}, \cite{applications_benhcmarks},
+\cite{scalability_frameworks}.
 
 \subsection{Experiment Lifecycle}\label{subsec:experiment-lifecycle}
 Before running the experiments, it's important to make sure that all required

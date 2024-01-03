@@ -74,7 +74,7 @@ the hood comparing to a simple script.
 \begin{description}
     \item[Scalablity] It's scalable by default, just by specifying config.
     The main different in scalability is that frameworks use models such as
-    MapReduce, DAG.
+    MapReduce, DAG \cite{map_reduce}.
     It means that frameworks knows itself how be scalable itself, under the hood,
     using multiple nodes.
     More details about MapReduce and DAG in the next chapter.
@@ -621,7 +621,7 @@ Apache Flink handle the state differently.
 In summary, both Kafka Streams and Apache Flink provide flexible recovery strategies
 for stateful stream processing.
 However, there must be a tradeoff defined between recovery time, solution cost and
-technical capabilities of engineering team.
+technical capabilities of engineering team \cite{flinkCheckpoints}, \cite{flink_checkpoints_flink}.
 
 
 \section{Summary}\label{sec:summary}

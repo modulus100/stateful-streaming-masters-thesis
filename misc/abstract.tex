@@ -1,30 +1,57 @@
-Software engineering is a diverse field that focuses on addressing various business domain problems.
-These domain-specific issues and their corresponding use cases necessitate in-depth analysis to determine
-the most suitable technologies for achieving optimal problem-solving outcomes.
-One rapidly growing area in software engineering is big data.
-Although big data is sometimes regarded as a marketing term, it encompasses complex data processing frameworks and datasets.
+The rapid growth of different data sources, which produce large volumes of data in
+real-time, makes choosing the best suitable technology stack and framework necessary.
+For this reason, this research’s use case aims to find the best stateful stream processing framework that
+can process petabytes of data in real-time and restore a state in case of fault tolerance.
+State recovery in meaningful time is a crucial characteristic of stateful streaming systems
+for this research.
 
-As the volume of produced data has dramatically increased over the years,
-modern technical solutions capable of processing massive amounts of data are required.
-The open-source community offers a decent frameworks and tools, making it challenging to choose the best option.
-This research focuses on comparing the most suitable frameworks for specific use cases,
-particularly those that designed for stateful real-time stream processing.
+\hspace{2em}The research focuses on two real-time streaming frameworks: Kafka
+Streams and Apache Flink. These framework's community, open-source code, features,
+and documentation have made them perfect for use in production environments for years.
+During the research, will be built two prototypes with Kafka Streams and Apache Flink
+that use the same input and output. The same input and output as Kafka topic is an efficient
+point to get performance benchmarks for further analysis of two prototypes. Performance
+benchmarks should show how the system behaves if all workers or some workers are down
+for a short period.
+This research is based on AWS and Kubernetes, which provide cloud infrastructure and
+tools for running prototypes under stress. AWS is also a popular cloud provider for systems
+that run in production environments.
 
-Stream processing use cases are relatively rare compared to typical problems that can often
-be solved with traditional batch processing or simple program which doesn't require MapReduce
-model or DAG.
-However, stateful stream processing assumes that real-time processing relies on previous states,
-and unbounded data flow which may indicate abnormal system behavior, such as fraud alerts in financial transactions
-within a specific time frame.
-Quick response can facilitate necessary actions and save time.
-Therefore, it is crucial to provide a technical analysis of the most suitable frameworks,
-assess their advantages and disadvantages, and examine the complexities involved in their
-application for stateful stream processing based on given use case.
-This master's thesis offers a technical overview,
-benchmarks, and comparisons for appropriate use cases.
-The use case examines considers that each incoming event triggers state re-computation and
-evaluates how efficiently Kafka Streams and Apache Flink manage state under heavy loads,
-represented by a stream of Kafka messages.
-The ideal framework should address existing problems while offering excellent scalability,
-fault tolerance, and cost efficiency.
-This master's thesis aims to provide an answer and a technical overview based on the given requirements.
+\hspace{2em}The results should provide a useful benchmarks of Kafka Streams and Apache Flink frameworks that were
+stressed in a production-like environment.
+For this case study a
+Chaos Mesh was chosen for a chaos simulation and reducing worker replicas during execution of experiments.
+Collected benchmarks like CPU consumption, network utilization, and time for a state recoverу give an understanding
+about what framework to choose.
+
+
+%Software engineering is a diverse field that focuses on addressing various business domain problems.
+%These domain-specific issues and their corresponding use cases necessitate in-depth analysis to determine
+%the most suitable technologies for achieving optimal problem-solving outcomes.
+%One rapidly growing area in software engineering is big data.
+%Although big data is sometimes regarded as a marketing term, it encompasses complex data processing frameworks and datasets.
+%
+%As the volume of produced data has dramatically increased over the years,
+%modern technical solutions capable of processing massive amounts of data are required.
+%The open-source community offers a decent frameworks and tools, making it challenging to choose the best option.
+%This research focuses on comparing the most suitable frameworks for specific use cases,
+%particularly those that designed for stateful real-time stream processing.
+%
+%Stream processing use cases are relatively rare compared to typical problems that can often
+%be solved with traditional batch processing or simple program which doesn't require MapReduce
+%model or DAG.
+%However, stateful stream processing assumes that real-time processing relies on previous states,
+%and unbounded data flow which may indicate abnormal system behavior, such as fraud alerts in financial transactions
+%within a specific time frame.
+%Quick response can facilitate necessary actions and save time.
+%Therefore, it is crucial to provide a technical analysis of the most suitable frameworks,
+%assess their advantages and disadvantages, and examine the complexities involved in their
+%application for stateful stream processing based on given use case.
+%This master's thesis offers a technical overview,
+%benchmarks, and comparisons for appropriate use cases.
+%The use case examines considers that each incoming event triggers state re-computation and
+%evaluates how efficiently Kafka Streams and Apache Flink manage state under heavy loads,
+%represented by a stream of Kafka messages.
+%The ideal framework should address existing problems while offering excellent scalability,
+%fault tolerance, and cost efficiency.
+%This master's thesis aims to provide an answer and a technical overview based on the given requirements.

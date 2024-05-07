@@ -1,506 +1,641 @@
 \section{Introduction}\label{sec:introduction}
 
 
-\subsection{Overview}\label{sec:overview}
-This chapter provides describes methods which are used in this research.
-The main goal of the thesis is to figure out how Apache Flink and Kafka Streams
-behave, perform, what kind of configurations are needed, how do solve fault tolerance problems
-in case of a stateful streaming.
-They both are designed for using in a streaming domain but there must be some difference
-about how do they perform and get configured to run them in Kubernetes cluster.
-The key moments for both systems are: scalability, resilience, fault tolerance, cost efficiency,
-setup complexity, documentation, learning curve.
-
-In order to get experiments running it is crucial to get an execution environment, especially
-for a big data solutions which is not possible to run on a laptop.
-Big data solutions and benchmarks require a cluster of hardware machines which represents node.
-For this reason all the benchmarks and execution environment is done with AWS and EKS in
-particular.
-AWS provides such service as Amazon Managed Streaming.
-Obviously it solves a lot of configuration problems, but adds additional cost.
-It should be suitable for less loaded streaming solutions where load demand is not that big
-and there's no dedicated team.
-Really heavy loaded services where latency is also is important rely on their own
-Kafka cluster setup and streaming setup such as Spark Streaming or Apache Flink.
-These experiments are based on custom configuration provided by Theodolite framework.
-Theodolite provides essential customizable Kafka cluster setup which is easily to reconfigure
-and have more control over running experiments which makes also easy deployable cluster
-for EKS infrastructure.
-
-In order to get a measurable benchmarks, Theodolite provides a superb framework to get
-things running and measurable with the following tools: Grafana, Prometheus Operator.
-These tools have out of the box ready and configurable prometheus pod monitoring agents
-to get any kind of metrics from running pods within the EC2 node.
-Also, Theodolite operator as well as Prometheus and Grafana are easily deployable
-are designed specifically for Kubernetes cluster environment which provides a super low latency
-real time metrics.
+%\subsection{Overview}\label{sec:overview}
+This chapter describes the methods that are used in this research.
+The main goal of the thesis is to figure out how Apache Flink and
+Kafka Streams behave and perform, what configurations are needed,
+and how to solve fault tolerance problems in case of a stateful streaming.
+They both are designed for use in a streaming domain, but there must
+be some difference in how they perform and get configured to run in the Kubernetes cluster.
+The key moments for both systems are scalability, resilience, fault tolerance,
+cost efficiency, setup complexity, documentation, and learning curve.
+To get experiments running, it is crucial to get an execution environment,
+especially for big data solutions, which are not possible to run on a laptop.
+Big data solutions and benchmarks require a cluster of hardware machines that represent nodes.
+For this reason, all the benchmarks and execution environments are done with AWS and EKS in particular.
+AWS provides services such as Amazon Managed Streaming.
+It solves a lot of configuration problems, but it adds additional cost.
+It should be suitable for less-loaded streaming solutions where load demand is not that
+big and there’s no dedicated team.
+Heavy-loaded services where latency is also essential rely on their own Kafka cluster setups
+and streaming setup, such as Spark Streaming or Apache Flink.
+These experiments are based on the execution configuration provided by the Theodolite framework.
+Theodolite provides an essential customizable Kafka cluster setup,
+which is easy to reconfigure and has more control over running experiments,
+making it easy to deploy infrastructure in EKS \cite{AWSEKS2024}.
+Theodolite \cite{theodolite_framework}, a robust framework, plays a pivotal role in acquiring measurable benchmarks.
+It offers a suite of tools, including Grafana \cite{Grafana2024} and Prometheus Operator \cite{PrometheusOperator2024}.
+These tools are equipped with ready-to-use and configurable Prometheus \cite{Prometheus2024} pod monitoring agents,
+enabling the collection of various metrics from running pods within the EC2 node \cite{aws_node_types} \cite{EC2}.
+The Theodolite operator, in conjunction with Prometheus and Grafana,
+is specifically designed for easy deployment in a Kubernetes cluster environment,
+providing super low latency real-time metrics.
 
 One of the most important step is a data analysis, which is also possible using Theodolite framework
 since it provides metrics export interface.
 All the recorded metrics will be analysed using Python libraries and tools
-\cite{hightower2019kubernetes}, \cite{pivotto2023prometheus}, \cite{theodolite_framework}.
+\cite{hightower2019kubernetes} \cite{pivotto2023prometheus} \cite{theodolite_framework}.
 
 
-\subsection{Research Objectives}\label{sec:research-objectives}
-Since Apache Flink and Kafka streams are supposed to solve data streaming problems, it's
-quite important to understand their scalability efficiency for a highly loaded systems.
-While this research was being done, another important event happened is a release of Java 21
-and support for the brand new Generational ZGC which is an experimental low-latency JVM
-Garbage Collector.
-It's fascinating if the new JVM Garbage Collector is able to add any performance boost for
-stateful streaming use case, and is there any performance advantages comparing to Java 11
-and Java 21 without ZGC.
-As a conclusion there following sub problems:
+\section{Research technical tasks}\label{sec:research-objectives}
+Two frameworks, Apache Flink and Kafka Streams, are written in Java and designed to run in a cloud environment.
+Both prototypes are written in Java.
+For experiments,  AWS was chosen since it is one of the most advanced cloud providers.
+AWS provides services for running scalable streaming solutions such as EBS \cite{awsEBS}, EFS \cite{awsEFS}, EC2 \cite{EC2}, EKS \cite{AWSEKS2024}.
+The research is split into following steps:
 
 \begin{description}
-    \item[Performance comparison] Experiments with Flink and Kafka Streaming running on Java 11,
-    Java 21 and Java 21 with ZGC.
-    \item[Scability experiments] How do Flink and Kafka Streams perform with different Java versions
-    in case of a resource shortage, for example a shortage of replicas in case of a high load.
-    \item[Fault Tolerance] What if highly loaded streaming pipelines get replicas killed, how
-    would react Flink and Kafka Streams, how much time they need to restore a state and how consumer
-    group latency would look like.
-    kafka consumer group latency is especially crucial since it defines how fast the system
-    is able to react on specific events, like a fraud detection.
+    \item[Prototypes development] Development of two Java based prototypes with Apache Flink and
+    Kafka Streams which process the same input and send result to the same output.
+    Both prototypes are based on Java 11.
+    Input and output are Kafka topics with 50 partitions.
+    \item[Tools selection] AWS as cloud provider, EKS as kubernetes cluster, Theodolite \cite{theodolite_framework}
+    \cite{applications_benhcmarks} that is one of the most advanced frameworks for setting up streaming benchmarks
+    in cloud environment.
+    Theodolite includes out of the box Grafana \cite{Grafana2024}, Prometheus \cite{Prometheus2024} \cite{PrometheusOperator2024}, Kafka \cite{kafka_intro}, Apache Flink and Kafka Streams cloud
+    benchmarking cloud configurations provides as Helm charts \cite{helm}.
+    Chaos Mesh \cite{chaosMesh} is chosen as it provides scheduled job failures in a cloud environment.
+    \item [Kubernetes cluster design] The cluster must have different node groups for different components.
+    For this study were used 3 main node groups, worker node group, infra node groups, generator node groups, depicted on Figure \ref{fig:node-gorups}.
+    \item[Metrics definition] Metrics include node network traffic, CPU consumptions, consumer group lag,
+    lag for each partition, state recovery time.
+    All metrics are implemented with PromQL \cite{prometheusQuerying}.
+    \item [Experiments execution] All experiments are defined with Theodolite execution files \cite{theodoliteExecution}
+    that allows to rerun experiments with the same execution conditions.
+    \item[Results collection] Results from PromQL execution are saved in Kubernetes by Theodolite as scv files.
+    \item[Results analysis] CSV files get analysed with Matplotlib Python library.
 \end{description}
 
-Besides the sub problems above, there are additional questions about cloud configuration for Flink
-and Kafka Streams, since Flink requires additional steps to get the Flink cluster running.
-Especially it's fascinating with the brand new Flink Kubernetes operator release.
-It supposed to dramatically simplify operations of the Flink cluster, and it's cloud configuration.
-Moreover, the latest Flink Kubernetes Operator release supports the autoscaling functionality out of the box.
-
-
-\section{Experimental Setup}\label{sec:exp-setup}
-This section covers an infrastructure setup for experiments.
-It must be said that setting up a working infrastructure was the most
-challenging part of the thesis, however despite on a fact that a goal
-of the thesis is a comparison of two powerful data streaming frameworks,
-their cloud setup is incredibly challenging.
-Developer or a researcher is supposed to know quite well Kubernetes infrastructure,
-its principles, challenges, common problems and incoming errors.
-
-
-\subsection{EKS Cluster Configuration}\label{subsec:eks-cluster-configuration}
-EKS provides a decent infrastructure in order to get started with the
-Kubernetes cluster.
-Obviously that is not free, but it's well documented and quite easy
-to get started with a template configuration.
-The first EKS cluster for experiments was created manually, but following
-standard steps.
-It works for the first time, but recreation of EKS cluster gets extremely
-tedious once it's needs to be ofter created and deleted.
-EKS cluster should not be running while there is no any experiments running, since
-it gets extremely costly, especially if EKS is used for scalability testing.
-Fortunately, such problem is quite common for devops engineers and for this
-reason there are superb tools already available for such use cases.
-The most popular are Terraform and eksctl.
-Despite on the fact that eksctl is specifically designed for EKS cluster, Terraform
-provides more configurable API not only for EKS but for Kubernetes as well which
-makes it and excellent for deploying and destroying cluster infrastructure
-with a few commands.
-
-\begin{lstlisting}[label={lst:eks-example}]
-resource "aws_eks_cluster" "my-eks-cluster-name" {
-  kubernetes_network_config {
-    ip_family         = "ipv4"
-    service_ipv4_cidr = "10.100.0.0/16"
-  }
-
-  name     = "my-eks-cluster-name"
-  role_arn = "arn:aws:iam::112233:role/MyClusterRole"
-
-  tags_all = {
-    "team" = "taltech"
-  }
-
-  version = "1.28"
-
-  vpc_config {
-    endpoint_public_access  = "false"
-    public_access_cidrs     = ["0.0.0.0/0"]
-    security_group_ids      = ["sg-group-id"]
-    subnet_ids              = ["subnet-id-1", "subnet-id-2"]
-  }
-\end{lstlisting}
-
-The code snippet above ~\ref{lst:eks-example} shows Terraform script to
-create EKS cluster with running a single command.
-
-
-
-\subsection{Deployment with Terraform}\label{subsec:deployment-with-terraform}
-As it was mentioned earlier, Terraform allows a developer to automate
-operations with EKS cluster using a code.
-There is a specific term for it, which is IaC.
-Having a complex Kubernetes cluster setup it's extremely tedious and error-prone
-getting services running in the EKS, especially with an increasing code base.
-Terraform provides a readable for human and computer configuration, where a developer
-defines which cloud resources must be created after running Terraform scripts.
-It's also needs some time to learn a docs and then get scripts running.
-The way Terraform scripts were initiated is using another popular tool which is
-the terraformer.
-This tools is an open source program provided by Google which is able to scan a currently
-running infrastructure of a cloud provider like AWS and created based on it a
-structured Terraform scripts which will be an entry point to maintain the EKS.
-Specially for these benchmarks it is important to specify node groups
-for different services which must be able to scale independently, by increasing
-a number and a type of EC2 node.
-For example the load generator service must not run on the same node as the Kafka cluster,
-to make sure there's no impact on Kafka cluster or any other service.
-
-In general, via Terraform is possible to define cloud resources, and get them deployed with
-scripts.
-Any specific details are available in docs.
-The core infrastructure which is needed for running benchmarks is a different node groups with node types,
-because some service consumer different types of node parameters.
-
-\begin{lstlisting}[label={lst:ter-kafka}]
-resource "aws_eks_node_group" "kafkaNodeGroup" {
-  ami_type       = "AL2_x86_64"
-  capacity_type  = "ON_DEMAND"
-  cluster_name   = aws_eks_cluster.my-eks-cluster.name
-  instance_types = ["d2.xlarge"]
-
-  taint {
-    key = "type"
-    value  = "kafka-node"
-    effect = "NO_SCHEDULE"
-  }
-
-  labels = {
-    type = "kafka-node"
-  }
-
-  node_group_name = "kafkaNodeGroup"
-  node_role_arn   = "arn:aws:iam::112233:role/MsThesisNodeRole"
-
-  scaling_config {
-    desired_size = "3"
-    max_size     = "3"
-    min_size     = "3"
-  }
-
-  subnet_ids = ["subnet-id-1", "subnet-id-2"]
-
-  version = "1.28"
-}
-\end{lstlisting}
-
-
-The code snippet above ~\ref{lst:ter-kafka} shows a base Terraform script on order to create
-a node group for EKS cluster.
-Such script creates a node group of 3 nodes of type d2.xlarge which is sufficient to deploy and run
-Kafka cluster with 3 brokers.
-However, it's possible to run multiple brokers on a single EC2 node, but for experiments
-each broker run only on a separate node to make predictable and balanced cpu, memory, and disc
-resources consumption.
-The node type d2.xlarge is suggested to be used for nodes without Amazon EBS by Confluent.
-Since experiments are not supposed to be running 24/7 in production, it's sufficient to take node
-with internal storage \cite{confluent2023}.
-
-
-\begin{table}[h]
+\begin{figure}[ht]
     \centering
-    \begin{tabular}{@{}ll@{}}
-        \toprule
-        Specification          & Detail                       \\ \midrule
-        Instance Type          & d2.xlarge                    \\
-        vCPUs                  & 4                            \\
-        Memory                 & 30.5 GiB                     \\
-        Network Performance    & Moderate                     \\
-        Physical Processor     & Intel Xeon E5-2676 v3 (Haswell) \\
-        Clock Speed            & 2.4 GHz                      \\
-        CPU Architecture       & x86\_64                      \\
-        EBS Optimized          & True                         \\
-        Max Bandwidth          & 750 Mbps on EBS              \\
-        Max I/O Operations/sec & 6000 on EBS                  \\
-        Disk Space             & 2048 GiB                     \\
-        Elastic Map Reduce     & Supported                    \\
-        Pricing                & Starting at \$0.69 per hour  \\ \bottomrule
-    \end{tabular}
-    \caption{AWS EC2 d2.xlarge Instance Specification}
-    \label{tab:d2_xlarge_spec}
-\end{table}
-
-The Table~\ref{tab:d2_xlarge_spec} above shows detailed specification, 2TB of disc space is more than
-enough to run benchmarks for a short period of time.
-The price for such cluster is about \$2 per hour.
-If the benchmarks takes 4 hours, then price for such Kafka cluster is \$8.
+    \includegraphics[width=1\textwidth]{figures/eks-node-groups-2}
+    \caption{\textit{Node groups for the case study experiments.}}
+    \label{fig:node-gorups}
+\end{figure}
 
 
 \newpage
+\section{Kubernetes cluster setup}\label{subsec:eks-cluster-configuration}
+This section is describing Kubernetes cluster and key components which are running
+with during experiments execution to collect metrics.
 
-\begin{figure}[H]
+\subsection{EKS node groups}\label{node-groups}
+
+As shown on Figure \ref{fig:node-gorups}, the setup is based on 5 node groups, with the following
+node types \cite{aws_node_types}.
+
+\begin{description}
+    \item[Kafka node gorup] 3 Kafka brokers, where each broker gets deployed to a separate node.
+    Such that several brokers never run on the same node.
+    Node types for this group is m6i.2xlarge \cite{aws_node_types}.
+    \item[Load generator node group] Is Java based application which generates Kafka messages of 1Kb size
+    to Kafka input topic with 50 partitions.
+    In this study two load generator instances are used where each generates 100000 messages per second.
+    Node types for this group is m6i.xlarge.
+    \item[Manager node group] The following node groups is intended only for Apache Flink task manager \cite{flinkArchitecture2024} instance of 1 replica
+    and is not used for experiments with Kafka Streams.
+    \item[Infra node group] This node group is used for benchmarking tools deployment such as EBS, EFS controllers,
+    Grafana, Theodolite operator, Prometheus, Chaos Mesh and additional operators which are used only for data collection
+    and visualisations.
+    Should not affect workers and load generators.
+    Node types for this group is m6i.xlarge.
+    \item[Worker node group] This node group is used for Kafka Streams setup and Apache Flink task managers \cite{flinkArchitecture2024}.
+    Such that stream processing replicas are running on a separate nodes, where each node has only one worker replica
+    running in the node.
+    Detailed worked groups is shown on Figure \ref{fig:worker-node-group}.
+    For this case study were chosen 8 nodes with 8 workers replicas.
+    Node types for this group is c5.large.
+\end{description}
+
+
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/eks-node-groups}
-    \caption{\textit{Node groups which were used for experiments.}}
-    \label{fig:eks-groups-img}
+    \includegraphics[width=1\textwidth]{figures/worker-node-group}
+    \caption{\textit{Worker node group with 2 nodes and pods in each node.}}
+    \label{fig:worker-node-group}
 \end{figure}
 
 
-\subsection{Node Groups Configuration}\label{subsec:node-group}
-In a previous chapter was given a brief overview over Kafka cluster node group,
-but this chapter will give an overview over rest of the EKS cluster components.
+\subsection{EFS and EBS storage services}\label{storage-services}
 
-
-\subsubsection{Load Generator}
-The load generator is only designed to generate a stream of Kafka messages, where
-each message is a random byte array of 1KB size.
-The generator is based on a simple spring boot app, where the load of messages is
-generated with ScheduledThreadPoolExecutor of 4 threads.
-A nature of the mode generator requires more cpus rather than a disc space.
-
-The node group of the generator consists only of a single node of a type m6i.xlarge.
-This node is efficient enough to generate 200K MPS and even much more.
-
-\subsubsection{Kafka Streams}
-Kafka Streams as well as the load generator is based on Spring Boot framework since it is
-the mose popular and common framework for running Java applications and provides out of the box
-support for Kafka Streams.
-It's important to have as fewer configurations as possible to simply run and Deploy Kafka Steams
-instance.
-Kafka Steams node groups consists of m6in.xlarge type nodes.
-
-\subsubsection{Apache Flink}
-Apache Flink requires a different approach for node groups comparing to Kafka Streams since
-it has a different architecture and includes additional components to run and manage streaming
-jobs.
-For this benchmarking experiments two separate node groups were used.
-The first one of for Flink job manager and the second one is for Flink task managers which
-are workers.
-Flink job managers require much less resources since they are intended to control task managers.
-For these experiments for task managers was chosen a node groups of type t3.medium.
-For task managers was chosen a more performant node type m6in.xlarge.
-The same type was used for Kafka Streams to compare a resource consumption for two solutions.
-
-However, these experiments required additional component for the Flink cluster which is
-Flink Kubernetes Operator.
-It is open source and open source solution to dramatically simplify a Flink cluster management.
-For experiments, it was running withing the monitoring node group since it doesn't consume
-many resources.
-
-\subsubsection{Monitoring}
-The following group was used as a default node group for any other services, like Prometheus,
-Grafana, Prometheus Operator, Flink Operator.
-Monitor node groups consists of two nodes of type t3.medium.
-
-\subsection{Infrastructure as Code}\label{subsec:infrastructure-as-code}
-With such complex cloud setup, it's simple not possible to create and such
-complex infrastructure and fortunately there are available tools for such use cases.
-The main tools which were used for experiments are \textbf{Helm} and \textbf{kubectl}
-
-\begin{description}
-    \item[Helm] is a tool which manages packages for Kubernetes cluster, it allows to create,
-    update and deleted Kubernetes resources.
-    \item[kubectl] is a cli tools which also allows to manage resources, but not as a package but
-    rather each resource separately.
-\end{description}
-
-For experiments, were create all required Kubernetes resources which makes deployment
-quite fast and efficient.
-
-For each experiment there's a set of Kubernetes resource files which is used
-for a specific benchmark.
-It makes deployment easier and less error-prone, however it might bring
-too much boilerplate code.
-
-
-
-\section{Implementation Details}\label{sec:implementation-details}
-This section covers use case implementation with Kafka Streams and Apache Flink.
-The source code for Apache Flink and Kafka Streams is Java Gradle based project,
-where gradle version is 8.5 and jar were build with Java 11 and Java 21.
-Both builds were deployed to Amazon ECR, such that once deployed Docker images
-are reusable and not required to be built for each experiment separately.
-The core image built platform is Docker.
-In order to deploy build images two cli tools were used.
-
-\begin{description}
-    \item[Docker cli] is a tool which help to build Docker images with the app and deploy them
-    to Kubernetes cluster.
-    Quite important to use a correct platform, for experiment were chosen Linux distros, for
-    this reason the following build parameter was used --platform=linux/amd64.
-    Moreover, docker cli provide aws login system which knows how to deploy build images directly to
-    Amazon ECR.
-    \item[aws cli] is a cli which provides API to work with AWS resources, docker cli
-    is integrated with the aws cli quite well.
-\end{description}
-
-
-\subsection{Rule Based Matcher}\label{subsec:rule-matcher}
-
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=1\textwidth]{figures/rule-matcher}
-    \caption{\textit{Rule based matcher.}}
-    \label{fig:rule-matcher}
+    \includegraphics[width=1\textwidth]{figures/aws-storage-pvc}
+    \caption{\textit{EBS and EFS network storage diagram.}}
+    \label{fig:aws-storage}
 \end{figure}
 
-This is the core component of streaming pipeline for the use case.
-It could be considered as a black box which provides a single api method to match
-incoming bytearray record.
-Its logic could be described using diagram above ~\ref{fig:rule-matcher}.
-
-The matched has a single method interface for byte array record which
-can based on defined rules is able to matched with them.
-All matched rules get shuffled by name which makes to distributed
-further processing among all replicas.
-The main parameters of the matcher are selectivity and number of rules.
+Stream processing uce case is data intensive in this study.
+To be able to handle data loads during experiments were chosen two storage services
+for storing the data.
+These storage are EFS \cite{awsEFS}, and EBS \cite{awsEBS}.
+AWS provides networks storage types for EC2 nodes \cite{EC2} which are used
+for storing a big amount of data.
+The crucial part of this network storage is that if worker on node goes down for some time,
+then saved state won't be lost.
+A real physical node is connected to the network storage via a network configuration as it shown on Figure \ref{fig:aws-storage}
+which is also described in details in the following documentation \cite{awsKubernetesStorage}.
+Such a complex model gives pod a network connection to a physical storage such that huge amount
+of data gets written and read fast enough for production systems.
+The diagram on Figure \ref{fig:aws-storage} includes several the following components.
 
 \begin{description}
-    \item[Matching Rule] is a rule which has a selectivity property to be matched with a byte array record.
-    \item[Selectivity] is a value with a floating point which defined a probability witch record can be
-    matched.
+    \item[Flink and Kafka pods] These are Java application which use networks storage.
+    For thi study Flink workers use EFS storage for storing stages and Kafka brokers
+    use EBS for Kafka topics.
+    \item[EBS and EFS CSI drivers] Cloud tool provided by AWS to manage network connection
+    between nodes and networks storage.
+    Driver runs on the same node as Kafka brokers and Flink worker to get network storage access.
+    \item[PV] Persistent volume gives networks access to a physical storage, where the state gets saved.
+    \item[PVC] Persistent volume claim is Kubernetes abstraction that connects to PV.
 \end{description}
 
-For example, if the matcher has 10000 rules, with selectivity of 0.00002, then a probability with
-which it will be matched with incoming record is 0.00002\%.
-These values could be different depending on a system simulation.
-The matcher is a prototype which is supposed to simulate a real service.
-Since the rule matched is not a focus of the research, it is more than enough to use
-a prototype.
 
-\subsection{Kafka Streams Implementation}\label{subsec:kafka-streams-implementation}
+\section{Metrics exporters}\label{sec:metrics-exporters}
+This section cover how a Theodolite framework \cite{theodolite_framework} is used
+to get metrics and to run experiments in cloud environment.
 
-\begin{figure}[H]
+\subsection{Kafka metrics exporters}\label{subsec:metrics-exporters}
+Theodolite comes with a set of tools which are used to export metrics from running pods.
+
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=1\textwidth]{figures/k-streams-shuffle}
-    \caption{\textit{Kafka Streams flow.}}
-    \label{fig:k-stream-shufle}
+    \includegraphics[width=1\textwidth]{figures/kafka-exporter}
+    \caption{\textit{Kafka metrics exporter that sends metrics from JMX exporter to Prometheus.}}
+    \label{fig:kafka-exporter}
 \end{figure}
 
-Kafka Streams flow is presented on the figure above ~\ref{fig:k-stream-shufle}.
-For the experiments Kafka Streams use default configurations with Kafka
-commit time period of 30 seconds.
+On Figure \ref{fig:kafka-exporter} is an example of Kafka metrics exporter.
+It reads metrics from Kafka's JMX exporter about consumer groups, commit lag, topics,
+topic partitions, topic offsets.
 
+\newpage
+\subsection{Kubernetes and worker metrics exporters}
+Kubernetes setup in this study is coming with Kubernetes metrics services \cite{kubernetesResourceMetrics} which are
+configured by Theodolite.
+Metrics diagram is depicted on Figure \ref{fig:metrics-collection}.
 
-\subsection{Flink Implementation}\label{subsec:flink-implementation}
-
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=1\textwidth]{figures/flink-shuffle}
-    \caption{\textit{Flink flow.}}
-    \label{fig:flink-shuffle}
+    \includegraphics[width=1\textwidth]{figures/metrics-collection}
+    \caption{\textit{Kubernetes and worker metrics exporters.}}
+    \label{fig:metrics-collection}
 \end{figure}
 
-Flink is using keyed process which also type of aggregation but with a little
-bi different behaviour.
-Flink implementation uses checkpoints, which are get saved every 30 seconds
-to Amazon S3 storage.
-It was done to get the Kafka commit interval like in
-Kafka Streams implementation.
-The same commit interval helps to compare a performance difference.
+Kubernetes metrics services expose metrics about node network utilization and CPU consumption.
+All exposed metrics get saved to Prometheus that makes them accessible by executing PromQL.
+For example, Grafana queries PromQL queries to plot real time charts with used cluster resources.
 
-However, experiments with Flink require to install to EKS cluster additional
-dependencies which are need to manager Flink cluster.
-These tools are: cert-manager for Kubernetes cluster, Flink Kubernetes Operator,
-RBAC roles and permission for Flink Operator which must be allowed to
-deploy Flink task managers and job managers.
-
-
-\section{Monitoring}\label{sec:monitoring-and-benchmarking-setup}
-Monitoring consists of two main component which are Grafana and Prometheus.
-Prometheus is a time series database which is optimized for fast
-and frequent queries which give information about different kind of
-available metrics.
-Since Prometheus is a centralised data storage, there are configurable
-Prometheus exporters which know how to read metrics from running pods
-in the same node.
-There are different kinds of metrics options available, one of them
-is JMX exporter, which is common java bases services.
-There's available open sourced Prometheus Kafka exporter which requires
-minimal configurations to get Kafka cluster metrics exporter to Prometheus.
-
-Grafana provides UI interface to configure a datasource which is Prometheus
-for experiments flow.
-For each individual metric, is PromQl under the hood which periodically
-request Prometheus for continuous time services charts.
-Query request frequency is a fast enough to make metrics a real time.
-This base setup is enough for experiments, however in a future research
-additional tools will be required.
-
-
-\section{Theodolite Framework}
-Theodolite is a framework for benchmarking the horizontal and vertical scalability
-of cloud-native applications in Kubernetes.
-Native Kubernetes support makes it an excellent tool for experiments
-since EKS cluster is used.
-Theodolite provides documented examples of how to create Kubernetes resources
-in order to run benchmarks with less effort, everything is automated.
-However, it might take some time to get confident with configuring
-benchmarks for different use cases.
-Besides a provided out-of-the-box tools like Kafka cluster, Grafana, Prometheus,
-Theodolite also contains an operator which manages benchmarks deployment,
-configurations and runtime.
-
-For each experiment there is set of Kubernetes resource files which get installed
-with one sh file \cite{theodolite_framework}, \cite{applications_benhcmarks},
-\cite{scalability_frameworks}.
-
-\subsection{Experiment Lifecycle}\label{subsec:experiment-lifecycle}
-Before running the experiments, it's important to make sure that all required
-dependencies are installed before start.
-Experiment lifecycle could be described in a several steps.
+\subsection{Latency exporter}\label{subsec:latency-exporter}
+The Latency exporter measures the latency between when a message was generated by load generator and when
+it was committed to a Kafka log.
+Provides positive and negative latencies as metrics that are available in Prometheus as p50, p90, p95.
+These latencies get calculated by micrometer \cite{micrometer}.
 
 \begin{description}
-    \item[Deployment of benchmark executer] is a first manual step which tells Theodolite
-    with what parameters deploy the system.
-    For example, number of replicas, load generator MPS, number of experiment executions,
-    execution time, pause time between experiments.
-    \item[Execution start] is an automatic action managed be the Theodolite operator which starts
-    load generator instances and Flink/Kafka Streams instances.
-    \item[Execution] is defined period of time when deployed instances are running in their
-    native mode.
-    \item[Execution stop] once time has elapsed, Theodolite operator saved recorded metrics to csv files.
-    \item[Execution reset] if there are configured multiple experiments, then
-    Theodolite operator waits for defined period of time to start a new experiment.
+    \item[Positive Latency] If the latency is positive (a message commit time is later than event time).
+    \item[Negative Latency] If the latency is negative (a message commit time is earlier than event time)
 \end{description}
 
-Everything is automated besides deployment of benchmark executer.
 
-\subsection{Performance Metrics}\label{subsec:performance-metrics}
+\section{Benchmarks setup}\label{sec:benchamrks-setup}
+Theodolite is responsible for a full lifecycle of benchmarks execution with
+a set of Kubernetes deployment configurations.
+The General diagram is depicted on Figure \ref{fig:theodolite-process}.
 
-The results will be provided as visual illustration having additional metrics like:
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/theodolite-process}
+    \caption{\textit{Theodolite manages deployment and undeployment of load generator and workers during experiment execution.}}
+    \label{fig:theodolite-process}
+\end{figure}
+
+To run execution with Theodolite, some preconfiguration has to be made.
+Theodolite needs to get access to Kubernetes deployment files for Kafka Streams,
+Apache Flink.
+Deployment for load generator and monitoring tools comes with Theodolite our of the box.
+For custom usage, it is possible to override some deployment configurations.
+Apache Flink and Kafka Streams deployment files have to be stored in Kubernetes as config maps \cite{kubernetesConfigMap}.
+After each benchmark execution, Theodolite automatically undeploys load generator and workers.
+
+
+\section{Chaos engineering with Chaos Mesh}\label{sec:chaos-mesh}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/mesh-pod-kill}
+    \caption{\textit{Example of Chaps Mesh periodic Pod kill. Chaos Mesh controller selects Chas Mesh daemon to
+    and sends a message to kill the worker.}}
+    \label{fig:chaos-mesh-kill}
+\end{figure}
+
+Chaos Mesh \cite{chaosMesh} is a tool used in the Kubernetes environment to simulate
+different kinds of failures.
+In this case study it is used to kill worker node by using pod selector.
+Each deployed worked has its own label, for example, type:worker.
+For all experiments, Chaos Mesh is configured to kill worker pods every 3 minutes.
+An example use of Chaos Mesh in this case study is depicted on Figure \ref{fig:chaos-mesh-kill}.
+Chaos Mesh installs Chaos daemon on each worker node, such that has
+Chas Mesh contoller has access to worker pods for failure simulation.
+However, Kubernetes quite fast redeploys killed worker replicas, but this time is more than enough
+to find valuable metrics about how the system would behave.
+For example, Kafka Streams and Apache Flink use different re-partitions algorithms to
+handle load balancing.
+Depending on re-partitions strategies, this case study can show this difference by measurement
+a stare recovery time.
+
+\section{Experiment setup}\label{sec:experiment-setup}
+This section describing experiment execution steps to show how to deploy benchmarks setup and
+get benchmarks as csv files from scratch.
+
+\subsection{Prerequisite}\label{subsec:prerequisite}
+To get started with benchmarks execution, some steps need to be finished first.
 
 \begin{description}
-    \item[Kafka consumer group lag] Consumer group represents a set of Kafka consumers
-    united into one big consumer group.
-    Such metric defines how efficient the system is able to process an incoming load of
-    kafka messages from the input topic where the indicator of processed messages is Kafka topic
-    offset.
-    If the system as a consumer group has committed only 5 messages of 10 then the lag is going to grow.
-    And vice versa, if a consumer group has committed 15 messaged out of 10 incoming then it means that
-    the system has been able to process previously arrived messages and the lag is going to go down up to
-    zero, which means there is no lag anymore.
-    It will be seen as a slope on a time series metric.
-    \item[Input message rate]
-    this metric shows how many messages the system as the consumer group has received during a certain period of time.
-    It could be measured using Kafka Prometheus exporter and PromQL.
-    \item[Output message rate]
-    This metric shows how many messages the system has produced during a certain period of time, and
-    also could be measured using PromQL.
+    \item[Prototype compilation] Build prototypes source code.
+    \item[Docker images] Once code is compiled, Docker images need to be built and deployed
+    to ECR \cite{awsECR} service which is AWS image storage.
+    \item[Kubernetes Deployment configuration] Configure deployment configuration files for Apache Flink
+    and Kafka Streams prototypes.
 \end{description}
 
-For the following experiments, both Flink and Kafka Streams use 30 seconds
-topic commit period.
-It needs to be clarified that this research is not focusing on cpu and heap consumption,
-due to additional technical difficulties and cloud configuration.
-Such metrics will be definitely included in the next performance evaluation.
-But still there were cpu limits applied for Flink task manager pods.
-Each replica could use up to the 1 cpu, but there were no limits applied
-for Kafka Streams replicas.
-Kafka Steams replicas used EC2 node cpu limitations due
-to errors during deployment with having limit of 1 cpu.
-This needs to be researched as well as a next step.
+Built Docker images and configured Kubernetes deployment files are
+prerequisite to get started with Theodolite and EKS deployment.
+
+\subsection{EKS cluster}\label{subsec:eks-cluster}
+Execute command with eksctl tool EKS cluster configuration in cluster.yaml  \ref{lst:eks-cluster}.
+
+\begin{lstlisting}[label={lst:eks-cluster}]
+    eksctl create cluster -f cluster.yaml
+\end{lstlisting}
+
+Once the cluster is created, EBS and EFS network storage have to be configured.
+For EFS the following installation guide needs to be done first \cite{awsEfsCsi}.
+The Next step is applying EBS and EFS storage configuration \ref{lst:eks-storage}.
+
+\begin{lstlisting}[label={lst:eks-storage}]
+    kubectl apply -f kafka-storage-class.yaml
+    kubectl apply -f flink-storage-class.yaml
+\end{lstlisting}
 
 
-\subsection{Data Collection}\label{subsec:data-collection}
-Since for experiments Theodolite framework is used, it provides data collection api.
-For each experiment, it is possible to define a set of PromQL queries which
-will be executed once the experiment has finished benchmark execution.
-During the experiment all the data gets collected to Prometheus as time
-series metrics which will be read and saved to the Kubernetes volume as
-csv files.
-Once csv files are saved, it's possible to download them on a personal
-computer for a further analysis.
+\subsection{Theodolite configuration}\label{subsec:theodolite-isntllation}
+Prerequisite is values.yaml with defined node selector for EKS node groups,
+it should not be installed to worker and load generator nodes.
+
+\begin{lstlisting}[label={lst:theodolite-inst}]
+    helm install theodolite theodolite/theodolite -f values.yaml
+\end{lstlisting}
+
+These Kubernetes config maps load deployment files to Kubernetes config such that Theodolite
+has access to files within Kubernetes.
+\begin{lstlisting}[label={lst:config-map}]
+    kubectl create configmap --from-file ./shuffle-load-generator/
+    kubectl create configmap --from-file ./shuffle-latency-exporter/
+    kubectl create configmap --from-file ./shuffle-kstreams/
+    kubectl create configmap --from-file ./shuffle-flink/
+\end{lstlisting}
+
+
+These commands tell Theodolite how to access config maps created in a previous step \ref{lst:config-map}.
+\begin{lstlisting}[label={lst:config-map-theodo}]
+    kubectl apply -f theodolite-benchmark-kstreams.yaml
+    kubectl apply -f theodolite-benchmark-flink.yaml
+\end{lstlisting}
+
+At this step, deployment configurations should be ready to be used during experiments.
+
+
+\subsection{Running experiments}\label{subsec:running-experiments}
+To run experiments, Thedolite is listening for execution files to be applied but
+kubectl.
+Theodolite Kubernetes execution file represents instruction for Theodolite operator
+about how to run experiments.
+For example, what services to deploy, how log should experiment be running, environmental
+variables, how many repeats have to be.
+Experiment execution could be described in the following steps:
+
+\begin{description}
+    \item[Appy execution config] Once Theodolite operator found the execution config, it's
+    starting deploying components which are need to be running only during the experiment execution.
+    In this case study, these are: load generator, latency exporter, Kafka Streams or Apache Flink
+    workers replicas.
+    \item[Running experiment] Based on the execution config, the experiment is running for a certain
+    time period, in this case study it's 18 minutes.
+    \item[Finishing experiment] Once the execution time has passed, Theodolite operator undeploy,
+    deployed services at execution start, executes PromQL queries to get benchmarks from Grafana,
+    and saves them as CSV files.
+\end{description}
+
+Examples of csv files are shown in
+
+\begin{lstlisting}[label={lst:bench-csv-files}]
+    exp3_managerNodesDiskReadMB_2s_1.csv
+    exp3_generic_latency_p90_30s_1.csv
+    exp3_kafkaBrokerNodesCPUsPercentageUtilization_2s_1.csv
+    exp3_workerNodesCPUsPercentageUtilization_2s_1.csv
+\end{lstlisting}
+
+
+\section{Benchmarks metrics}\label{sec:benchmarks-metrics}
+Benchmarks setup for the case study is exploring the following metrics:
+
+\begin{itemize}
+    \item Average worker nodes CPU utilization.
+    \item Output throughput per broker.
+    \item Output throughput per partition.
+    \item Input throughput per broker.
+    \item Input throughput per partition.
+    \item Input throughput.
+    \item Kafka broker node CPU utilization.
+    \item Kafka broker nodes disc read.
+    \item Kafka broker nodes disc write.
+    \item Kafka broker nodes network received.
+    \item Kafka broker node networks transmitted.
+    \item Kafka input topic lag per partition.
+    \item Kafka laf per repartition.
+    \item Kafka message latency p50.
+    \item Kafka message latency p90.
+    \item Kafka message latency p95.
+    \item Kafka message latency p99.
+    \item All nodes CPU utilization.
+    \item Number of worker replicas.
+    \item Output throughput.
+    \item Pods CPU percentage utilization.
+    \item Pods CPU total utilization.
+    \item Pods IO memory ped pod.
+    \item Pods network received.
+    \item Pods network transmit.
+    \item Worker nodes CPU utilization.
+    \item Worker nodes disk read.
+    \item Worker nodes disk write.
+    \item Worked nodes network received.
+    \item Worker nodes network transmit.
+    \item Kafka consumer group lag trend.
+\end{itemize}
+
+Based on the metrics above, the case study is trying to make a
+conclusion about performance difference between Kafka Streams and Apache Flink
+in case of fault tolerance with a state recovery.
+
+%\subsubsection{Load Generator}
+%The load generator is only designed to generate a stream of Kafka messages, where
+%each message is a random byte array of 1KB size.
+%The generator is based on a simple spring boot app, where the load of messages is
+%generated with ScheduledThreadPoolExecutor of 4 threads.
+%A nature of the mode generator requires more cpus rather than a disc space.
+%
+%The node group of the generator consists only of a single node of a type m6i.xlarge.
+%This node is efficient enough to generate 200K MPS and even much more.
+%
+%\subsubsection{Kafka Streams}
+%Kafka Streams as well as the load generator is based on Spring Boot framework since it is
+%the mose popular and common framework for running Java applications and provides out of the box
+%support for Kafka Streams.
+%It's important to have as fewer configurations as possible to simply run and Deploy Kafka Steams
+%instance.
+%Kafka Steams node groups consists of m6in.xlarge type nodes.
+%
+%\subsubsection{Apache Flink}
+%Apache Flink requires a different approach for node groups comparing to Kafka Streams since
+%it has a different architecture and includes additional components to run and manage streaming
+%jobs.
+%For this benchmarking experiments two separate node groups were used.
+%The first one of for Flink job manager and the second one is for Flink task managers which
+%are workers.
+%Flink job managers require much less resources since they are intended to control task managers.
+%For these experiments for task managers was chosen a node groups of type t3.medium.
+%For task managers was chosen a more performant node type m6in.xlarge.
+%The same type was used for Kafka Streams to compare a resource consumption for two solutions.
+%
+%However, these experiments required additional component for the Flink cluster which is
+%Flink Kubernetes Operator.
+%It is open source and open source solution to dramatically simplify a Flink cluster management.
+%For experiments, it was running withing the monitoring node group since it doesn't consume
+%many resources.
+%
+%\subsubsection{Monitoring}
+%The following group was used as a default node group for any other services, like Prometheus,
+%Grafana, Prometheus Operator, Flink Operator.
+%Monitor node groups consists of two nodes of type t3.medium.
+%
+%\subsection{Infrastructure as Code}\label{subsec:infrastructure-as-code}
+%With such complex cloud setup, it's simple not possible to create and such
+%complex infrastructure and fortunately there are available tools for such use cases.
+%The main tools which were used for experiments are \textbf{Helm} and \textbf{kubectl}
+%
+%\begin{description}
+%    \item[Helm] is a tool which manages packages for Kubernetes cluster, it allows to create,
+%    update and deleted Kubernetes resources.
+%    \item[kubectl] is a cli tools which also allows to manage resources, but not as a package but
+%    rather each resource separately.
+%\end{description}
+%
+%For experiments, were create all required Kubernetes resources which makes deployment
+%quite fast and efficient.
+%
+%For each experiment there's a set of Kubernetes resource files which is used
+%for a specific benchmark.
+%It makes deployment easier and less error-prone, however it might bring
+%too much boilerplate code.
+
+
+
+%\section{Implementation Details}\label{sec:implementation-details}
+%This section covers use case implementation with Kafka Streams and Apache Flink.
+%The source code for Apache Flink and Kafka Streams is Java Gradle based project,
+%where gradle version is 8.5 and jar were build with Java 11 and Java 21.
+%Both builds were deployed to Amazon ECR, such that once deployed Docker images
+%are reusable and not required to be built for each experiment separately.
+%The core image built platform is Docker.
+%In order to deploy build images two cli tools were used.
+%
+%\begin{description}
+%    \item[Docker cli] is a tool which help to build Docker images with the app and deploy them
+%    to Kubernetes cluster.
+%    Quite important to use a correct platform, for experiment were chosen Linux distros, for
+%    this reason the following build parameter was used --platform=linux/amd64.
+%    Moreover, docker cli provide aws login system which knows how to deploy build images directly to
+%    Amazon ECR.
+%    \item[aws cli] is a cli which provides API to work with AWS resources, docker cli
+%    is integrated with the aws cli quite well.
+%\end{description}
+
+
+%\subsection{Rule Based Matcher}\label{subsec:rule-matcher}
+%
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=1\textwidth]{figures/rule-matcher}
+%    \caption{\textit{Rule based matcher.}}
+%    \label{fig:rule-matcher}
+%\end{figure}
+%
+%This is the core component of streaming pipeline for the use case.
+%It could be considered as a black box which provides a single api method to match
+%incoming bytearray record.
+%Its logic could be described using diagram above ~\ref{fig:rule-matcher}.
+%
+%The matched has a single method interface for byte array record which
+%can based on defined rules is able to matched with them.
+%All matched rules get shuffled by name which makes to distributed
+%further processing among all replicas.
+%The main parameters of the matcher are selectivity and number of rules.
+%
+%\begin{description}
+%    \item[Matching Rule] is a rule which has a selectivity property to be matched with a byte array record.
+%    \item[Selectivity] is a value with a floating point which defined a probability witch record can be
+%    matched.
+%\end{description}
+%
+%For example, if the matcher has 10000 rules, with selectivity of 0.00002, then a probability with
+%which it will be matched with incoming record is 0.00002\%.
+%These values could be different depending on a system simulation.
+%The matcher is a prototype which is supposed to simulate a real service.
+%Since the rule matched is not a focus of the research, it is more than enough to use
+%a prototype.
+
+%\subsection{Kafka Streams Implementation}\label{subsec:kafka-streams-implementation}
+%
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=1\textwidth]{figures/k-streams-shuffle}
+%    \caption{\textit{Kafka Streams flow.}}
+%    \label{fig:k-stream-shufle}
+%\end{figure}
+%
+%Kafka Streams flow is presented on the figure above ~\ref{fig:k-stream-shufle}.
+%For the experiments Kafka Streams use default configurations with Kafka
+%commit time period of 30 seconds.
+%
+%
+%\subsection{Flink Implementation}\label{subsec:flink-implementation}
+%
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=1\textwidth]{figures/flink-shuffle}
+%    \caption{\textit{Flink flow.}}
+%    \label{fig:flink-shuffle}
+%\end{figure}
+%
+%Flink is using keyed process which also type of aggregation but with a little
+%bi different behaviour.
+%Flink implementation uses checkpoints, which are get saved every 30 seconds
+%to Amazon S3 storage.
+%It was done to get the Kafka commit interval like in
+%Kafka Streams implementation.
+%The same commit interval helps to compare a performance difference.
+%
+%However, experiments with Flink require to install to EKS cluster additional
+%dependencies which are need to manager Flink cluster.
+%These tools are: cert-manager for Kubernetes cluster, Flink Kubernetes Operator,
+%RBAC roles and permission for Flink Operator which must be allowed to
+%deploy Flink task managers and job managers.
+%
+%
+%\section{Monitoring}\label{sec:monitoring-and-benchmarking-setup}
+%Monitoring consists of two main component which are Grafana and Prometheus.
+%Prometheus is a time series database which is optimized for fast
+%and frequent queries which give information about different kind of
+%available metrics.
+%Since Prometheus is a centralised data storage, there are configurable
+%Prometheus exporters which know how to read metrics from running pods
+%in the same node.
+%There are different kinds of metrics options available, one of them
+%is JMX exporter, which is common java bases services.
+%There's available open sourced Prometheus Kafka exporter which requires
+%minimal configurations to get Kafka cluster metrics exporter to Prometheus.
+%
+%Grafana provides UI interface to configure a datasource which is Prometheus
+%for experiments flow.
+%For each individual metric, is PromQl under the hood which periodically
+%request Prometheus for continuous time services charts.
+%Query request frequency is a fast enough to make metrics a real time.
+%This base setup is enough for experiments, however in a future research
+%additional tools will be required.
+%
+%
+%\section{Theodolite Framework}
+%Theodolite is a framework for benchmarking the horizontal and vertical scalability
+%of cloud-native applications in Kubernetes.
+%Native Kubernetes support makes it an excellent tool for experiments
+%since EKS cluster is used.
+%Theodolite provides documented examples of how to create Kubernetes resources
+%in order to run benchmarks with less effort, everything is automated.
+%However, it might take some time to get confident with configuring
+%benchmarks for different use cases.
+%Besides a provided out-of-the-box tools like Kafka cluster, Grafana, Prometheus,
+%Theodolite also contains an operator which manages benchmarks deployment,
+%configurations and runtime.
+%
+%For each experiment there is set of Kubernetes resource files which get installed
+%with one sh file \cite{theodolite_framework}, \cite{applications_benhcmarks},
+%\cite{scalability_frameworks}.
+%
+%\subsection{Experiment Lifecycle}\label{subsec:experiment-lifecycle}
+%Before running the experiments, it's important to make sure that all required
+%dependencies are installed before start.
+%Experiment lifecycle could be described in a several steps.
+%
+%\begin{description}
+%    \item[Deployment of benchmark executer] is a first manual step which tells Theodolite
+%    with what parameters deploy the system.
+%    For example, number of replicas, load generator MPS, number of experiment executions,
+%    execution time, pause time between experiments.
+%    \item[Execution start] is an automatic action managed be the Theodolite operator which starts
+%    load generator instances and Flink/Kafka Streams instances.
+%    \item[Execution] is defined period of time when deployed instances are running in their
+%    native mode.
+%    \item[Execution stop] once time has elapsed, Theodolite operator saved recorded metrics to csv files.
+%    \item[Execution reset] if there are configured multiple experiments, then
+%    Theodolite operator waits for defined period of time to start a new experiment.
+%\end{description}
+%
+%Everything is automated besides deployment of benchmark executer.
+%
+%\subsection{Performance Metrics}\label{subsec:performance-metrics}
+%
+%The results will be provided as visual illustration having additional metrics like:
+%
+%\begin{description}
+%    \item[Kafka consumer group lag] Consumer group represents a set of Kafka consumers
+%    united into one big consumer group.
+%    Such metric defines how efficient the system is able to process an incoming load of
+%    kafka messages from the input topic where the indicator of processed messages is Kafka topic
+%    offset.
+%    If the system as a consumer group has committed only 5 messages of 10 then the lag is going to grow.
+%    And vice versa, if a consumer group has committed 15 messaged out of 10 incoming then it means that
+%    the system has been able to process previously arrived messages and the lag is going to go down up to
+%    zero, which means there is no lag anymore.
+%    It will be seen as a slope on a time series metric.
+%    \item[Input message rate]
+%    this metric shows how many messages the system as the consumer group has received during a certain period of time.
+%    It could be measured using Kafka Prometheus exporter and PromQL.
+%    \item[Output message rate]
+%    This metric shows how many messages the system has produced during a certain period of time, and
+%    also could be measured using PromQL.
+%\end{description}
+%
+%For the following experiments, both Flink and Kafka Streams use 30 seconds
+%topic commit period.
+%It needs to be clarified that this research is not focusing on cpu and heap consumption,
+%due to additional technical difficulties and cloud configuration.
+%Such metrics will be definitely included in the next performance evaluation.
+%But still there were cpu limits applied for Flink task manager pods.
+%Each replica could use up to the 1 cpu, but there were no limits applied
+%for Kafka Streams replicas.
+%Kafka Steams replicas used EC2 node cpu limitations due
+%to errors during deployment with having limit of 1 cpu.
+%This needs to be researched as well as a next step.
+%
+%
+%\subsection{Data Collection}\label{subsec:data-collection}
+%Since for experiments Theodolite framework is used, it provides data collection api.
+%For each experiment, it is possible to define a set of PromQL queries which
+%will be executed once the experiment has finished benchmark execution.
+%During the experiment all the data gets collected to Prometheus as time
+%series metrics which will be read and saved to the Kubernetes volume as
+%csv files.
+%Once csv files are saved, it's possible to download them on a personal
+%computer for a further analysis.

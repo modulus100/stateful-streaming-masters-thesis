@@ -1,70 +1,48 @@
-This chapter provides a theory which stands behind Apache Flink and Kafka Stream,
-key concepts and illustrative examples, and main challenges.
-A reader should be able to understand a context and why such frameworks needed.
-Both frameworks are based on principles of distributed systems design, which
-all be covered in context of a given problem.
+This chapter provides the theory behind Apache Flink and Kafka Streams, key concepts,
+illustrative examples, and main challenges.
+A reader should be able to understand the context and why such frameworks are needed.
+Both frameworks are based on principles of distributed systems design,
+which are all covered in the context of a given problem.
 
-\section{Why framework is needed}\label{subsec:why-framework-is-needed}
-During the research, I've figured out is that lots of engineers or developers who
-have never worked on data engineering problems have a narrow overview about
-what actually data frameworks are needed for.
+%\section{Simple use case}\label{subsec:why-framework-is-needed}
+%Let's define a simple task that is given by a business.
+%For example,  the business wants to know what songs get more streams in different countries.
+%A straightforward solution is the code below.
 
-Let's define a simple task which is given by a business, for example business wants to know
-what songs get more streams in different countries.
-A very simple solution would look like the code below.
+\section{Scaling problems}\label{subsec:simple-pip}
+Let's define a simple task that is given by a business.
+For example, the business wants to know what songs get more streams in different countries.
+A straightforward solution is the code below \ref{lst:chart_list}.
 
-\subsection{Simple pipeline example}\label{subsec:simple-pip}
 \begin{lstlisting}[label={lst:chart_list}]
     top_charts = db.select("top_charts")
     ordered_bands = top_charts
-        .groupBy(chart -> chart.country)
+        .group_by(chart -> chart.country)
         .agreggate_by(chart -> chart.streams)
         .order_by(chart -> chart.streams)
         .map(chart -> {chart.streams, chart.song, chart.country})
 
-    dashboard.show(ordered_bands)
 \end{lstlisting}
 
-At first look, it works as business wants and the question of why framework is needed for,
-is still not clear, because a simple script would do this job well enough.
-But here is coming a tricky part, what if data volume has become extremely large
-which leads a slow execution time, and for some reason application start getting OutOfMemory exception.
-It this case, the pipeline gets down and business goal is now achieved.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/vertical-horizontal-scaling}
+    \caption{\textit{Example of vertical and horizontal scaling, where vertical is about using more powerful node
+    and horizontal about adding more nodes.}}
+    \label{fig:vert-hor-scal}
+\end{figure}
 
-A first solution which comes to mind, is just to run separate jobs for different country ranges and
-then combine results.
-To run it such way that each script would become as independent deployable application
-which contains almost the same code, or can be the same if country ranges are specified as
-input parameters.
 
-\begin{lstlisting}[label={lst:chart_list_2}]
-    top_charts = db.select("top_charts").where(europe)
-    ordered_europe_bands = top_charts
-        .groupBy(chart -> chart.country)
-        .agreggate_by(chart -> chart.streams)
-        .order_by(chart -> chart.streams)
-        .map(chart -> {chart.streams, chart.song, chart.country})
+The first straightforward solution is to use a more advanced node \cite{aws_node_types} with more CPU, RAM, and Cores.
+Such a solution works until there's no such powerful node that can process high volumes of data.
+Even if such a node still exists, it might lead to processing downtime if the node is down for some reason.
+Adding additional resources such as CPU and RAM refers to vertical scaling that scales less than horizontal scaling \cite{vertical_horizontal_scalling_1}.
+Example on Figure \ref{fig:vert-hor-scal}.
 
-    dashboard.show(ordered_europe_bands)
-\end{lstlisting}
-
-This solution might help for some time, if data is still growing then
-it would become a nightmare supporting many similar jobs and
-then implementation additional jobs which combines results from all jobs
-and sends it to centric dashboard.
-Many jobs also would require additional devops setup and time.
-Also, it's not that ease to implement parallelize a job, if to run a job in parallel
-then they would produce the same result, just independently.
-Moreover, problems with processing speed and memory exertion can come back.
-
-\begin{description}
-    \item[Scalablity] it's quite clear that a solution with a simple script is not scalable
-    for huge datasets.
-    \item[Devops] requires additional work for development team, if case of trying to run
-    the same job but for different country ranges.
-\end{description}
-
-There's a solution for such cases, frameworks which are designed for such cases.
+Even having a scaling setup, big data processing is not that straightforward to scale without having
+in an efficient distributed processing model.
+These models are MapReduce \cite{map_reduce_google} \cite{map_reduce_2} \cite{map_reduce_3} and DAG \cite{flink_dag} \cite{kafka_streams_topology}.
+There are open-source solutions which implement one of model and successfully being used in industry \cite{flinkPoweredBy} \cite{netflixStreamingSQL}.
 Moreover, they provide an api which
 look almost the same as map, filter, reduce functions.
 
@@ -92,38 +70,28 @@ the hood comparing to a simple script.
     dramatically helps in setting up a cluster or a code implementation.
 \end{description}
 
-\subsection{Simple pipeline example with Apache Spark}\label{subsec:simple-spark}
-
-With a framework the pipeline looks the same, but with having all these features
-provided in the list above.
-
-\begin{lstlisting}[label={lst:spark}]
-spark = SparkSession.builder
-    .appName("Country Musical Streams")
-    .getOrCreate()
-
-df = spark.read.csv(data_path)
-result = df.groupBy("country")
-    .agg(sum("streams").alias("total_streams"))
-    .order_by(chart -> chart.streams)
-    .map(chart -> {chart.total_streams, chart.song, chart.country})
-
-\end{lstlisting}
-
-Obviously, frameworks have some disadvantageous, in case a big data
-it's the only way to go.
-Some of disadvantageous are:
-
-\begin{description}
-    \item[A need in learning new technology] A developer who's has to develop a data pipeline
-    has to understand what he's doing, how it works, and how to properly use an api.
-    \item[Deployment Setup] It's different comparing to a simple application.
-\end{description}
-
-Frameworks allow to reuse already existing pipelines and make relly reliable
-and scalable solution.
-This is just a small example to imagine how it's used and why.
-The next chapter goes to a technical details more deeply.
+%\subsection{Simple example with Apache Spark}\label{subsec:simple-spark}
+%
+%With a framework the pipeline looks the same, but with having all these features
+%provided in the list above.
+%
+%\begin{lstlisting}[label={lst:spark}]
+%spark = SparkSession.builder
+%    .appName("Country Musical Streams")
+%    .getOrCreate()
+%
+%df = spark.read.csv(data_path)
+%result = df.groupBy("country")
+%    .agg(sum("streams").alias("total_streams"))
+%    .order_by(chart -> chart.streams)
+%    .map(chart -> {chart.total_streams, chart.song, chart.country})
+%
+%\end{lstlisting}
+%
+%Frameworks allow to reuse already existing pipelines and make relly reliable
+%and scalable solution.
+%This is just a small example to imagine how it's used and why.
+%The next chapter goes to a technical details more deeply.
 
 
 \section{Stream processing: concepts}\label{sec:-concepts}

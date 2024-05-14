@@ -95,33 +95,23 @@ the hood comparing to a simple script.
 
 
 \section{Stream processing: concepts}\label{sec:-concepts}
-%First at all, I'm providing a key difference between a batch processing and a stream processing.
-%
-%In a batch processing mode, a job works with a data which has a defined size, for example,
-%database records, csv file.
-%It reads a date, process it and provides a result.
-%
-%Batch processing jobs usually get executed periodically with 3 main states,
-%which are, startup,
+Stream processing is a concept that is dedicated to systems that need to process an infinite
+message or event, often called an unbounded dataset \ref{Dataflow2015}.
 
-A stream has a very broad mining, for some people it refers to
-C++ standard input/output library, for some file stream and
+A stream has a quite broad meaning, it often gets referred to
+stdin and stdout of Unix programming languages \cite{kleppmann2017}.
+For some developers, stream could mean file stream API and
 for an average person it would mean video content stream, for example
 on YouTube or on Twitch.
-An actual meaning of a stream for a context of data processing
-is subsequent flow of an immutable data records or messages.
-A record or a message are interchangeable in this context.
+In this case study, the stream refers to infinite dataset that represents
+a infinite dataset.
 
-A typical stream processing is an implementation of a generic producer/consumer pattern.
-Producer/consumer pattern is quite similar to publisher/subscriber pattern but there's
-a difference between these two patterns.
+Typical stream processing is always has two
 
-\textbf{Publisher/Subscriber} is mostly used for a one-to-many communication,
-such as notifications or push messages.
 
-\textbf{Producer/Consumer} is used for a one-to-many, one-to-one and many-to-many,
-many-to-one communication.
-Is used with messages queues.
+\textbf{Publisher/Subscriber} quite often in used for notifications or push messages \ref{Eugster2003PublishSubscribe} \rer{azurePubSub}.
+
+\textbf{Producer/Consumer} is used with messages queues mostly .
 
 It is important to know that a difference between these patterns might be tricky,
 lots of details depend on a certain pattern implementation.

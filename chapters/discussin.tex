@@ -1,153 +1,26 @@
-\section{Interpretation of Results}\label{sec:interpretation-of-results}
-This research is focusing on 3 metrics, which are input rate, output rate and consumer group lag.
-Streaming prototypes which were benchmarked have two main characteristics, which are
-input/output interfaces and processing performance.
-Such results give a general performance overview of the system.
-Further research could be focused on specific metrics.
-The reason behind selecting 10000 rules and selectivity of 0.00002 is a
-simulation of a real production system.
-The main reason for using number of replicas between 10 and 12 for experiments
-was to find out a performance difference in case of different Java versions and replicas shortage.
-For instance, if one of Java versions would perform significantly better, then
-it's possible to reduce a number of replicas for the same workload and save
-solution costs.
-In ideal solution a consumer group commit lag must never grow but
-jumping between 0 and n, where n.
-The higher n is, the bigger delay is as well.
-For a real production systems, commit interval and number of replicase
-obviously will have to be tuned depending on the requirements.
-If the system is able to process the load, then consumer group lag never grow.
-But in order to avoid 30 seconds delay, even if the system performs well,
-it's important to adjust Kafka commit period, for example make it 10 or 20 seconds.
+\section{Related work}\label{sec:interpretation-of-results}
+There are lots of informative publications that have been made
+regarding stream processing systems.
+For example, Theodolite framework \cite{theodolite_framework} was born
+due to the need to evaluate performance in big data systems, especially
+targeting cloud environment based on Kubernetes.
+The framework comes with scalability benchmarks for Apache Flink and Kafka Streams.
+The use covers a case where the system must process thousands of sensors in
+real-time.
+Results show how Apache Flink can be efficient in case of increasing data volumes,
+such that Flink requires fewer replicas to handle the same amount of data.
+Another study covers benchmarks for windowing aggregations \cite{dataSystemBenchmarks}.
+Apache Flink, Apache Storm, and Apache Spark are considered for SQL-based windowing, where Apache Flink shows higher throughput.
+The recent release of ShuffleBench \cite{Henning_2024} that is focusing on scalability
+benchmarks evaluation of Apache Flink, Hazelcast Jet, Apache Spark, and Kafka Streams.
 
-Fault tolerance benchmark was done with Java 21, because such metric is
-focused on general system behaviour of a state recovery time rather than on Java version,
-however there is still could be some performance difference.
-The main metric of a state recovery time could be defined as a period of a time,
-from replica kill to a start of stabilized consumer group commit, when it doesn't
-change anymore.
+The following studies \cite{carbone2015lightweight} \cite{siachamis2024checkmate} focus
+primarily on checkpoints and state recovery use cases.
+The foundation covered in these studies gives a full overview of Flink's performance in
+case of a state recovery, especially in case of extensive data streams.
 
-Another motivational aspect is a release of Java 21.
-It's curious if Java 21 could produce a significant performance difference.
-There's no many benchmarks have been released at the moment of writing the
-thesis, and Flink officially is only moving forward for Java 21 official support.
-Since experiments with Java 21 were implemented with custom Docker image,
-such benchmarks for Flink are experimental to be able with the benchmarks in
-the future.
-
-The biggest different for Apache Flink and Kafka Streams implementation is output.
-Apache Flink sends each processed event to the output topic right after process single record,
-whereas Kafka Streams implementation aggregates many records first and sends aggregated
-records to the output topic.
-This is a main reason why Kafka Streams has less MPS in output, and they get send
-in interval whereas Apache Flink streams them constantly, without periods.
-Both solutions use at least once semantics, which is a default.
-
-\section{Comparison with related work}\label{sec:comparison-with-existing-literature}
-Experiments with the matched service are also been researched by Dynatrace research
-group in collaboration with JKU University.
-The research could be found here \cite{ICPE2024}.
-The following research is focusing more on scalability and brings benchmarks
-for different state and load size.
-That benchmarks show higher performance for Apache Flink, comparing to Kafka Streams and
-Hazelcast.
-Another research \cite{inoubli2018comparative} shows that a case study for
-Apache Flink, Apache Storm, Apache Flink, Apache Samza researched results
-for cpu metrics, where Flink has a significant less cpu resources consumption.
-For this master's thesis task manager nodes were running with 1 cpu limit,
-but the same cpu limit for Kafka Streams was problematic, Kubernetes cluster threw
-errors while deploying, this config has to be benchmarked in a further research.
-But still \cite{inoubli2018comparative} quite interesting, and should be repeated
-for new Java versions and framework versions.
-
-Another benchmarks \cite{flink_spark_vervica_2} from Flink creators is showing
-a higher performance for Flink with a single core cpu.
-The reason behind Flink lower cpu consumption is the way how Flink core us built.
-Most of the Streaming processing frameworks are written in Java/Scala programming
-language which means such frameworks are based on JVM garbage collector.
-However, JVM provides such api like sun.misc.Unsafe which is able to emulate
-C like memory allocation, without garbage collector, but its usage must
-be very careful and may lead to memory leaks.
-\cite{java_jvm, java_jvm_oracle, usafe_usage, usafe_usage_2}
-
-At moment of writing this thesis there were no any benchmarks available yet
-for java 21 with new garbage collector \cite{java_21_new_gc}.
-%All the experienced with Java 21 and Java 21 with new garbage collector
-%are required a further research.
-
-
-\section{Implications of Findings}\label{sec:implications-of-findings}
-
-\subsection{Kafka Streams}\label{subsec:kafka-streams}
-Benchmarks for Kafka Streams based on Java 11 (Experiments: \ref{fig:k-streams-java-11-replicas-10},
-\ref{fig:k-streams-java-11-replicas-11}, \ref{fig:k-streams-java-11-replicas-12})
-and Java 21 (Experiments: \ref{fig:k-streams-java-21-replicas-10},
-\ref{fig:k-streams-java-21-replicas-11}, \ref{fig:k-streams-java-21-replicas-12}) show a
-stable performance, each additional replica shows a lower
-Kafka Consumer group commit lag.
-With Java 21, the performance of Kafka Streams has improved significantly,
-commit lag shows show less latency and less commit lag.
-Therefore, it is definitely worthwhile to migrate Kafka Streams
-applications to Java 21.
-For Java 12 with Generational ZGC must be said that individual GC
-configuration requires a tuning, different heap size have an impact
-of performance.
-For such case Kafka Streams needs to well tuned and researched for
-the best performance setup, since (experiments: \ref{fig:k-streams-java-21-new-gc-replicas-10},
-\ref{fig:k-streams-java-21-new-gc-replicas-11}, \ref{fig:k-streams-java-21-new-gc-replicas-12})
-did not perform well for some reason.
-
-\subsection{Apache Flink}\label{subsec:ache-flink}
-Benchmarks for Flink based on Java 11 (experiments: \ref{fig:flink-java-11-replicas-10},
-\ref{fig:flink-java-11-replicas-11}, \ref{fig:flink-java-11-replicas-12})
-Shows a stable performance with each additional replica.
-
-Benchmark with Java 21 (experiments: \ref{fig:flink-java-21-replicas-10},
-\ref{fig:flink-java-21-replicas-11}, \ref{fig:flink-java-21-replicas-12})
-showing anatomical behaviour.
-It might be due to tuning configurations, since Java 21 is not officially supported
-by Flink at the date of writing this master's.
-
-However, the same time Flink with Java 21 Generational ZGC is showing
-performance difference, (experiments: \ref{fig:flink-java-21-new-gc-replicas-10},
-\ref{fig:flink-java-21-new-gc-replicas-11}, \ref{fig:flink-java-21-new-gc-replicas-12})
-and perform similar to Flink with Java 11.
-
-Due to configurations difference and Unsafe usage, such benchmarks need to have
-deeper research for difference Java versions and GC parameters.
-Another interesting behavior, is that Kafka Streams requires some
-time at startup to be able to work of a full load, it might take about 30 seconds
-1.5 minutes depending on replicase sizes and a workload.
-
-\subsection{Fault tolerance}\label{subsec:fault-tolerance}
-Experiment \ref{fig:kafka-streams-flink-fault-tolerance} is showing a
-relativity similar state restore time in case of killing one replica.
-However, for some reason Flink is showing less latency and
-consumer group commit lag after getting back killed replica, even
-if both were running with Java 21.
-Flink showed more stable kafka message commit lag.
-
-\section{Limitations of the Study and Future Research}\label{sec:limitations-of-the-study}
-The main limitation of the study is a different output configuration for
-Apache Flink and Kafka Streams.
-The next research step would be a comparison of Windowing usage.
-Both Kafka Streams and Apache Flink provide Windowing API. \cite{flink_windows, kafka_streams_windows}.
-Windowing performance provide the same output, and it also makes a lot of sense to
-add a heap size, cpu metrics to find out the most performant solution.
-
-Experiments with Apache Flink had more IO operations and network usage when sending Kafka messages
-to output Kafka topic, while Kafka Streams solution used aggregation and was sending
-calculated stated values only, which needed about 8-10 times less output messages.
-
-Additional research is needed to find out an impact of heap size over performance,
-experiments show how differently Flink and Kafka Streams behave for the same GC
-configuration \cite{java_21_new_gc}, \cite{gencer2021hazelcast}, \cite{hazelcase_gc_concerns}.
-
-Also, must be said that lots of available benchmarks are getting old, for this
-reason benchmarks should be up-to-date with new framework and java version release.
-However, \cite{ICPE2024} is the freshest benchmark release at the day of writing.
-
-Latest Flink versions with Flink Kubernetes Operator \cite{flink_kubernetes_operator}
-simplifies cluster deployment and even provides autoscaling out of the box.
-There is no many Kubernetes based publication regarding latest Flink autoscaller
-which is coming with Flink Kubernetes operator out of the box.
+\section{Future work}\label{sec:future-work}
+Future work as an extension for this thesis is supposed to get benchmarks
+for differences state backends, different state sizes, network issues.
+Chaos Mesh \cite{chaosMesh} provides different tools for extensive chaos engineering
+uses cases.

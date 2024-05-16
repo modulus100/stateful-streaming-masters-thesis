@@ -69,7 +69,7 @@ The research is split into following steps:
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1\textwidth]{figures/eks-node-groups-2}
+    \includegraphics[width=1\textwidth]{figures/eks-node-groups}
     \caption{\textit{Node groups for the case study experiments.}}
     \label{fig:node-gorups}
 \end{figure}
@@ -338,46 +338,46 @@ Examples of csv files are shown in
 \end{lstlisting}
 
 
-\section{Benchmarks metrics}\label{sec:benchmarks-metrics}
-Benchmarks setup for the case study is exploring the following metrics:
-
-\begin{itemize}
-    \item Average worker nodes CPU utilization.
-    \item Output throughput per broker.
-    \item Output throughput per partition.
-    \item Input throughput per broker.
-    \item Input throughput per partition.
-    \item Input throughput.
-    \item Kafka broker node CPU utilization.
-    \item Kafka broker nodes disc read.
-    \item Kafka broker nodes disc write.
-    \item Kafka broker nodes network received.
-    \item Kafka broker node networks transmitted.
-    \item Kafka input topic lag per partition.
-    \item Kafka laf per repartition.
-    \item Kafka message latency p50.
-    \item Kafka message latency p90.
-    \item Kafka message latency p95.
-    \item Kafka message latency p99.
-    \item All nodes CPU utilization.
-    \item Number of worker replicas.
-    \item Output throughput.
-    \item Pods CPU percentage utilization.
-    \item Pods CPU total utilization.
-    \item Pods IO memory ped pod.
-    \item Pods network received.
-    \item Pods network transmit.
-    \item Worker nodes CPU utilization.
-    \item Worker nodes disk read.
-    \item Worker nodes disk write.
-    \item Worked nodes network received.
-    \item Worker nodes network transmit.
-    \item Kafka consumer group lag trend.
-\end{itemize}
-
-Based on the metrics above, the case study is trying to make a
-conclusion about performance difference between Kafka Streams and Apache Flink
-in case of fault tolerance with a state recovery.
+%\section{Benchmarks metrics}\label{sec:benchmarks-metrics}
+%Benchmarks setup for the case study is exploring the following metrics:
+%
+%\begin{itemize}
+%    \item Average worker nodes CPU utilization.
+%    \item Output throughput per broker.
+%    \item Output throughput per partition.
+%    \item Input throughput per broker.
+%    \item Input throughput per partition.
+%    \item Input throughput.
+%    \item Kafka broker node CPU utilization.
+%    \item Kafka broker nodes disc read.
+%    \item Kafka broker nodes disc write.
+%    \item Kafka broker nodes network received.
+%    \item Kafka broker node networks transmitted.
+%    \item Kafka input topic lag per partition.
+%    \item Kafka laf per repartition.
+%    \item Kafka message latency p50.
+%    \item Kafka message latency p90.
+%    \item Kafka message latency p95.
+%    \item Kafka message latency p99.
+%    \item All nodes CPU utilization.
+%    \item Number of worker replicas.
+%    \item Output throughput.
+%    \item Pods CPU percentage utilization.
+%    \item Pods CPU total utilization.
+%    \item Pods IO memory ped pod.
+%    \item Pods network received.
+%    \item Pods network transmit.
+%    \item Worker nodes CPU utilization.
+%    \item Worker nodes disk read.
+%    \item Worker nodes disk write.
+%    \item Worked nodes network received.
+%    \item Worker nodes network transmit.
+%    \item Kafka consumer group lag trend.
+%\end{itemize}
+%
+%Based on the metrics above, the case study is trying to make a
+%conclusion about performance difference between Kafka Streams and Apache Flink
+%in case of fault tolerance with a state recovery.
 
 %\subsubsection{Load Generator}
 %The load generator is only designed to generate a stream of Kafka messages, where
@@ -534,108 +534,4 @@ in case of fault tolerance with a state recovery.
 %deploy Flink task managers and job managers.
 %
 %
-%\section{Monitoring}\label{sec:monitoring-and-benchmarking-setup}
-%Monitoring consists of two main component which are Grafana and Prometheus.
-%Prometheus is a time series database which is optimized for fast
-%and frequent queries which give information about different kind of
-%available metrics.
-%Since Prometheus is a centralised data storage, there are configurable
-%Prometheus exporters which know how to read metrics from running pods
-%in the same node.
-%There are different kinds of metrics options available, one of them
-%is JMX exporter, which is common java bases services.
-%There's available open sourced Prometheus Kafka exporter which requires
-%minimal configurations to get Kafka cluster metrics exporter to Prometheus.
-%
-%Grafana provides UI interface to configure a datasource which is Prometheus
-%for experiments flow.
-%For each individual metric, is PromQl under the hood which periodically
-%request Prometheus for continuous time services charts.
-%Query request frequency is a fast enough to make metrics a real time.
-%This base setup is enough for experiments, however in a future research
-%additional tools will be required.
-%
-%
-%\section{Theodolite Framework}
-%Theodolite is a framework for benchmarking the horizontal and vertical scalability
-%of cloud-native applications in Kubernetes.
-%Native Kubernetes support makes it an excellent tool for experiments
-%since EKS cluster is used.
-%Theodolite provides documented examples of how to create Kubernetes resources
-%in order to run benchmarks with less effort, everything is automated.
-%However, it might take some time to get confident with configuring
-%benchmarks for different use cases.
-%Besides a provided out-of-the-box tools like Kafka cluster, Grafana, Prometheus,
-%Theodolite also contains an operator which manages benchmarks deployment,
-%configurations and runtime.
-%
-%For each experiment there is set of Kubernetes resource files which get installed
-%with one sh file \cite{theodolite_framework}, \cite{applications_benhcmarks},
-%\cite{scalability_frameworks}.
-%
-%\subsection{Experiment Lifecycle}\label{subsec:experiment-lifecycle}
-%Before running the experiments, it's important to make sure that all required
-%dependencies are installed before start.
-%Experiment lifecycle could be described in a several steps.
-%
-%\begin{description}
-%    \item[Deployment of benchmark executer] is a first manual step which tells Theodolite
-%    with what parameters deploy the system.
-%    For example, number of replicas, load generator MPS, number of experiment executions,
-%    execution time, pause time between experiments.
-%    \item[Execution start] is an automatic action managed be the Theodolite operator which starts
-%    load generator instances and Flink/Kafka Streams instances.
-%    \item[Execution] is defined period of time when deployed instances are running in their
-%    native mode.
-%    \item[Execution stop] once time has elapsed, Theodolite operator saved recorded metrics to csv files.
-%    \item[Execution reset] if there are configured multiple experiments, then
-%    Theodolite operator waits for defined period of time to start a new experiment.
-%\end{description}
-%
-%Everything is automated besides deployment of benchmark executer.
-%
-%\subsection{Performance Metrics}\label{subsec:performance-metrics}
-%
-%The results will be provided as visual illustration having additional metrics like:
-%
-%\begin{description}
-%    \item[Kafka consumer group lag] Consumer group represents a set of Kafka consumers
-%    united into one big consumer group.
-%    Such metric defines how efficient the system is able to process an incoming load of
-%    kafka messages from the input topic where the indicator of processed messages is Kafka topic
-%    offset.
-%    If the system as a consumer group has committed only 5 messages of 10 then the lag is going to grow.
-%    And vice versa, if a consumer group has committed 15 messaged out of 10 incoming then it means that
-%    the system has been able to process previously arrived messages and the lag is going to go down up to
-%    zero, which means there is no lag anymore.
-%    It will be seen as a slope on a time series metric.
-%    \item[Input message rate]
-%    this metric shows how many messages the system as the consumer group has received during a certain period of time.
-%    It could be measured using Kafka Prometheus exporter and PromQL.
-%    \item[Output message rate]
-%    This metric shows how many messages the system has produced during a certain period of time, and
-%    also could be measured using PromQL.
-%\end{description}
-%
-%For the following experiments, both Flink and Kafka Streams use 30 seconds
-%topic commit period.
-%It needs to be clarified that this research is not focusing on cpu and heap consumption,
-%due to additional technical difficulties and cloud configuration.
-%Such metrics will be definitely included in the next performance evaluation.
-%But still there were cpu limits applied for Flink task manager pods.
-%Each replica could use up to the 1 cpu, but there were no limits applied
-%for Kafka Streams replicas.
-%Kafka Steams replicas used EC2 node cpu limitations due
-%to errors during deployment with having limit of 1 cpu.
-%This needs to be researched as well as a next step.
-%
-%
-%\subsection{Data Collection}\label{subsec:data-collection}
-%Since for experiments Theodolite framework is used, it provides data collection api.
-%For each experiment, it is possible to define a set of PromQL queries which
-%will be executed once the experiment has finished benchmark execution.
-%During the experiment all the data gets collected to Prometheus as time
-%series metrics which will be read and saved to the Kubernetes volume as
-%csv files.
-%Once csv files are saved, it's possible to download them on a personal
-%computer for a further analysis.
+

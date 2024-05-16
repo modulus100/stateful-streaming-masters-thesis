@@ -1,12 +1,38 @@
-\section{Related work}\label{sec:interpretation-of-results}
-There are lots of informative publications that have been made
-regarding stream processing systems.
-For example, Theodolite framework \cite{theodolite_framework} was born
-due to the need to evaluate performance in big data systems, especially
-targeting cloud environment based on Kubernetes.
-The framework comes with scalability benchmarks for Apache Flink and Kafka Streams.
-The use covers a case where the system must process thousands of sensors in
-real-time.
+%\section{Related work}\label{sec:interpretation-of-results}
+Stream processing is a domain that focuses on continuously processing and analyzing data streams in real-time or near real-time.
+Compared to traditional batch processing, where data is collected,
+stored, and then processed, stream processing deals with unbounded data sets that are
+continuously generated and need to be processed on the fly \cite{kleppmann2017, Dataflow2015, Zaharia2012RDD, flink_ml_reseach}.
+This approach is essential for applications requiring real-time
+analytics, such as fraud detection, network monitoring, and real-time recommendation systems.
+
+One of the first mentions of the stream processing concept appeared in the early 1990s when databases
+evolved into data stream management systems (DSMS).
+Early research focused on developing algorithms and systems that could process
+data incrementally as it arrived rather than relying on the conventional batch processing model.
+One of the pioneering projects in this field was the Continuous Query Language (CQL)
+developed at Stanford University, which allowed users to express continuous queries over data streams.
+The first Complex Event Processing (CEP) systems appeared in the 2000s.
+Early CEP systems like Esper and Apache Storm provided the groundwork for
+modern stream processing frameworks by introducing concepts such as event windows,
+stateful processing, and real-time analytics.
+The rise of big data in the late 2000s and early 2010s brought
+new challenges and opportunities for stream processing.
+Traditional CEP systems struggled to handle the massive scale
+and high velocity of big data, leading to the development of distributed stream processing
+frameworks capable of scaling horizontally across many clusters of nodes.
+Modern systems from this era include Apache Flink \cite{flink_dag}, Apache Spark \cite{spark_structured_streaming}, Kafka Streams \cite{kafka_streams_intro}.
+The history of stream processing is well described in
+A Survey on the Evolution of Stream Processing Systems \cite{fragkoulis2023survey}.
+
+Choosing the most suitable stream processing system for a specific use case can be challenging.
+In such cases, benchmarks provide a clearer understanding of system performance under various conditions.
+The Theodolite framework \cite{theodolite_framework} was developed to evaluate the performance
+of big data systems, particularly in cloud environments based on Kubernetes.
+This framework includes scalability benchmarks for Apache Flink and Kafka Streams.
+One use case involves processing data from thousands of sensors in real-time.
+
+
 Results show how Apache Flink can be efficient in case of increasing data volumes,
 such that Flink requires fewer replicas to handle the same amount of data.
 Another study covers benchmarks for windowing aggregations \cite{dataSystemBenchmarks}.
@@ -18,9 +44,5 @@ The following studies \cite{carbone2015lightweight} \cite{siachamis2024checkmate
 primarily on checkpoints and state recovery use cases.
 The foundation covered in these studies gives a full overview of Flink's performance in
 case of a state recovery, especially in case of extensive data streams.
-
-\section{Future work}\label{sec:future-work}
-Future work as an extension for this thesis is supposed to get benchmarks
-for differences state backends, different state sizes, network issues.
-Chaos Mesh \cite{chaosMesh} provides different tools for extensive chaos engineering
-uses cases.
+Research conducted by colleagues from Tartu University offers additional insights into performance \cite{benchmarks_big_data},
+demonstrating that Apache Flink perform having a low latency even under high input throughput compared to other frameworks.

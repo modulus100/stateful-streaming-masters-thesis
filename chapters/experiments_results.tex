@@ -256,7 +256,8 @@ for Kafka Streams and Flink, due to Chaos Mesh cron jobs.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/input-throughput-2pod-kafka-flink}
-    \caption{\textit{Input throughput for Kafka records in case of 2 workers.}}
+    \caption{\textit{Input throughput for Kafka records in case of 2 workers.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-input-2}
 \end{figure}
 
@@ -264,7 +265,8 @@ for Kafka Streams and Flink, due to Chaos Mesh cron jobs.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/input-throughput-8pod-kafka-flink}
-    \caption{\textit{Input throughput for Kafka records in case of 8 workers.}}
+    \caption{\textit{Input throughput for Kafka records in case of 8 workers.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-input-8}
 \end{figure}
 
@@ -283,7 +285,8 @@ show that Flink workers get started faster.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/output-throught-2pods-kafka-flink}
-    \caption{\textit{Output throughput for Kafka records in case of 2 workers failures.}}
+    \caption{\textit{Output throughput for Kafka records in case of 2 workers failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-out-2}
 \end{figure}
 
@@ -291,7 +294,8 @@ show that Flink workers get started faster.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/output-throught-8pods-kafka-flink}
-    \caption{\textit{Output throughput for Kafka records in case of 8 worker failures.}}
+    \caption{\textit{Output throughput for Kafka records in case of 8 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-out-8}
 \end{figure}
 
@@ -317,7 +321,8 @@ Lag trend metric is described in the benchmarks section \ref{subsec:definition-o
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/lag-trend-2pod-kafka-flink}
-    \caption{\textit{Lag trend for worker cluster consumer group in case of 2 worker failures.}}
+    \caption{\textit{Lag trend for worker cluster consumer group in case of 2 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-lag-2}
 \end{figure}
 
@@ -325,7 +330,8 @@ Lag trend metric is described in the benchmarks section \ref{subsec:definition-o
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/lag-trend-8pod-kafka-flink}
-    \caption{\textit{Lag trend for worker cluster consumer group in case of 8 worker failures.}}
+    \caption{\textit{Lag trend for worker cluster consumer group in case of 8 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-lag-8}
 \end{figure}
 
@@ -340,7 +346,8 @@ For this reason, there is such a lag difference on Figure \ref{fig:kafka-flink-l
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/cpu-utilization-2pods-kafka-flink}
-    \caption{\textit{Average CPU utilization for all workers in case of 2 worker failures.}}
+    \caption{\textit{Average CPU utilization for all workers in case of 2 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-cpu-2}
 \end{figure}
 
@@ -348,7 +355,8 @@ For this reason, there is such a lag difference on Figure \ref{fig:kafka-flink-l
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/cpu-utilization-8pods-kafka-flink}
-    \caption{\textit{Average CPU utilization for all workers in case of 8 worker failures.}}
+    \caption{\textit{Average CPU utilization for all workers in case of 8 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-cpu-8}
 \end{figure}
 
@@ -363,7 +371,8 @@ Kafka Streams workers show higher downtime.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/network-received-2pod-kafka-flink}
-    \caption{\textit{Average inbound network traffic for all workers in case of 2 worker failures.}}
+    \caption{\textit{Average inbound network traffic for all workers in case of 2 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-received-2}
 \end{figure}
 
@@ -371,14 +380,16 @@ Kafka Streams workers show higher downtime.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/network-received-8pod-kafka-flink}
-    \caption{\textit{Average inbound network traffic for all workers in case of 8 worker failures.}}
+    \caption{\textit{Average inbound network traffic for all workers in case of 8 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-received-8}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/network-received-2pod-kafka-flink}
-    \caption{\textit{Average outbound network traffic for all workers in case of 2 worker failures.}}
+    \caption{\textit{Average outbound network traffic for all workers in case of 2 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-transmitted-2}
 \end{figure}
 
@@ -386,7 +397,8 @@ Kafka Streams workers show higher downtime.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kafka-flink/network-received-8pod-kafka-flink}
-    \caption{\textit{Average outbound network traffic for all workers in case of 8 worker failures.}}
+    \caption{\textit{Average outbound network traffic for all workers in case of 8 worker failures.
+    Failure period for kafka Stream and Apache Flink is not synced but happens within the same period.}}
     \label{fig:kafka-flink-transmitted-8}
 \end{figure}
 

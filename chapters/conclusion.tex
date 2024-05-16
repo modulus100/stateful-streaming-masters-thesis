@@ -1,57 +1,54 @@
-\section{Recap of the Research}\label{sec:recap-of-the-research}
-First at all, it needs to be mentioned that periodic batch processing job
-is might not be that scalable and fault-tolerant as modern
-stream processing frameworks.
-Stream processing can replace and should replace solutions which require
-a continuous stream processing with a minimal latency.
-Proper configuration and replica size significantly reduces latency comparing
-to periodic batch processing solutions.
-However, it also helps batch processing to reduce network load.
-But having Kafka interface, a requirement in low latency and fault tolerance,
-stream processing solutions win.
+This section provides results and future work that should provide deep knowledge
+about systems performance.
 
-\section{Concluding Thoughts}\label{sec:concluding-thoughts}
-Both Kafka Streams and Apache Flink demonstrate incredible performance
-and state recovery in case of replicas restoration.
-Apache Flink show better performance for in case of a high load
-and cpu extensive operations which makes Flink preferable
-option for heavy loaded systems.
-With better performance Flink requires deep knowledge in Flink
-API and its maintenance and working modes.
-It definitely requires a developer to learn additional technologies and documentation.
-Flink has an awesome community which is quite helpful with problems,
-for example Flink community Slack channel.
-Since Apache Flink is a part of Confluent, there are more and more tutorials
-being added for Flink which makes it learning more efficient.
-Kafka Streams cannot fully replace Flink, and it certainly has its own niche.
 
-Another important difference between Apache Flink and Kafka Streams which
-may affect a preference is Flink's ability to work with any kind of data
-sources, but Kafka Streams is specifically designed for Kafka.
-Apache Flink also has a native Python support, which allows Flink
-to be used with existing Python libraries, for almost any use case.
-
-\section{Practical Applications}\label{sec:practical-applications}
-The most usable use case for Flink is real time data analytics \cite{flink_use_cases}.
-Flink is actively used with real time machine learning algorithms, for
-real time predictions having different integration with Python ML libraries
-or with Java based FlinkML \cite{flink_ml}.
-Both Flink and Kafka Streams could be used for real time Fraud detection
-and IoT solutions, processing thousands or even millions of data sources.
+\section{Summary}\label{sec:recap-of-the-research}
+%First at all, it needs to be mentioned that periodic batch processing job
+%is might not be that scalable and fault-tolerant as modern
+%stream processing frameworks.
+%Stream processing can replace and should replace solutions which require
+%a continuous stream processing with a minimal latency.
+%Proper configuration and replica size significantly reduces latency comparing
+%to periodic batch processing solutions.
+%However, it also helps batch processing to reduce network load.
+%But having Kafka interface, a requirement in low latency and fault tolerance,
+%stream processing solutions win.
+Both prototypes based on the Apache Kafka and Apache Flink frameworks demonstrated robust capabilities in state restoration
+during short-term replica failures.
+However, several performance insights appeared in the distributed environment
+while processing the same input data for all experiments.
+In an experiment involving a cluster of 8 workers, the average recovery time to return to normal processing
+after 2 workers failed was 143 seconds for Kafka Streams and 113 seconds for Apache Flink.
+When the entire cluster of 8 workers gets killed, the average recovery time to return to
+normal processing was 153 seconds for Kafka Streams and 114 seconds for Apache Flink.
+For both experiments, Apache Flink has shown better performance, for the first is about 30 seconds
+and for the second is 40 seconds.
+The main reason behind this behavior is Apache Flink's ability to complete rebalancing faster and start processing of
+incoming records sooner.
+CPU metrics from the case study show that the Kafka Streams cluster experiences higher downtime.
+The lag trend metric in this case study showed better performance for Apache Flink.
+This means that, despite latency after rebalancing and state recovery,
+Apache Flink processes incoming records with less latency for all experiments.
+A significant difference was recorded when the entire cluster gets killed.
 
 
 \section{Future work}\label{sec:future-work}
-Future work as an extension for this thesis is supposed to get benchmarks
-for differences state backends, different state sizes, network issues.
-Chaos Mesh \cite{chaosMesh} provides different tools for extensive chaos engineering
-uses cases.
+Such results just depict one of use cases, however, benchmarks could be significantly
+extended with having set of additional configurations.
+This research could be extended with additional configurations.
+
+\begin{description}
+    \item[JVM] Different Java versions should be able to show a performance difference especially with new Java 21
+    garbage collector release.
+    Both Apache Flink and Kafka Streams are JVM based frameworks.
+    \item[State Backend] The main state backend for Kafka Streams is RocksDB. However, Apache Flink provides
+    different state backend setups and RocksDB as well.
+    \item[State Size] Different state size in a case of fault tolerance should bring more insights about frameworks
+    for real production systems that use large states.
+\end{description}
+
+Another direction of benchmarking involves testing various failure scenarios that are common in production systems,
+such as slow networking, disk backpressure, and running out of disk space.
+That would help extend chaos engineering knowledge for the critical real-time systems.
 
 
-143
-
-153
-
-
-113
-
-114

@@ -1,28 +1,55 @@
-The rapid growth of different data sources, which produce large volumes of data in
-real-time, makes choosing the best suitable technology stack and framework necessary.
-For this reason, this research’s use case aims to find the best stateful stream processing framework that
-can process petabytes of data in real-time and restore a state in case of fault tolerance.
-State recovery in meaningful time is a crucial characteristic of stateful streaming systems
-for this research.
+The rapid growth of data volumes that must be processed in real-time introduces
+challenges for architectural decisions regarding the selection of appropriate streaming technology.
+Stream processing is a paradigm that is focused on handling continuous and unbounded data streams in real-time.
+Frameworks such as Kafka Streams, Apache Flink, and Apache Spark are built for fault-tolerant scalable data processing.
+Their key part is graph-based data shuffling to guarantee resilent and distributed data processing.
+%One of the main advantages that frameworks provide out of the box is automatic state recovery by
+%using different recovery strategies like distributed snapshots or state changelogs.
 
-\hspace{2em}The research focuses on two real-time streaming frameworks: Kafka
-Streams and Apache Flink. These framework's community, open-source code, features,
-and documentation have made them perfect for use in production environments for years.
-During the research, will be built two prototypes with Kafka Streams and Apache Flink
-that use the same input and output. The same input and output as Kafka topic is an efficient
-point to get performance benchmarks for further analysis of two prototypes. Performance
-benchmarks should show how the system behaves if all workers or some workers are down
-for a short period.
-This research is based on AWS and Kubernetes, which provide cloud infrastructure and
-tools for running prototypes under stress. AWS is also a popular cloud provider for systems
-that run in production environments.
+In this study, two prototypes were developed that use
+rule-based matching service to demonstrate the proposed approach's effectiveness in a distributed environment.
+Rule based matching service produces labeled data records where each labeled record is unique state.
+The main is to figure out how efficiently frameworks recover a state under a high load in case of unexpected faults.
+The study involves a series of four experiments, focusing on the systems' performance under
+different failure scenarios using automatic failure simulator called Chaos Mesh.
 
-\hspace{2em}The results should provide a useful benchmarks of Kafka Streams and Apache Flink frameworks that were
-stressed in a production-like environment.
-For this case study a
-Chaos Mesh was chosen for a chaos simulation and reducing worker replicas during execution of experiments.
-Collected benchmarks like CPU consumption, network utilization, and time for a state recoverу give an understanding
-about what framework to choose.
+Each experiment includes the automatic replicas fault simulation: first experiment, 2 out of 8 replicas, and second experiment, all worker replicas.
+The experimental setup processes an input of 200000 1-kilobyte records per second,
+where records are sourced from a Kafka cluster.
+All experiments are executed within an Amazon Elastic Kubernetes Service (EKS) environment in the AWS cloud.
+Each experiment comes with a set of metrics such as input throughput, output through, lag trend,
+and CPU utilization to analyze rebalancing processes in case of automatic faults.
+
+Experiment results show that the Apache Flink-based prototype performs with lower latency and faster state recovery.
+The study references related work results that demonstrate better performance for Apache Flink.
+
+The thesis is written in English and is 67 pages long, including 6 chapters, and 38 figures.
+
+%The rapid growth of different data sources, which produce large volumes of data in
+%real-time, makes choosing the best suitable technology stack and framework necessary.
+%For this reason, this research’s use case aims to find the best stateful stream processing framework that
+%can process petabytes of data in real-time and restore a state in case of fault tolerance.
+%State recovery in meaningful time is a crucial characteristic of stateful streaming systems
+%for this research.
+%
+%\hspace{2em}The research focuses on two real-time streaming frameworks: Kafka
+%Streams and Apache Flink. These framework's community, open-source code, features,
+%and documentation have made them perfect for use in production environments for years.
+%During the research, will be built two prototypes with Kafka Streams and Apache Flink
+%that use the same input and output. The same input and output as Kafka topic is an efficient
+%point to get performance benchmarks for further analysis of two prototypes. Performance
+%benchmarks should show how the system behaves if all workers or some workers are down
+%for a short period.
+%This research is based on AWS and Kubernetes, which provide cloud infrastructure and
+%tools for running prototypes under stress. AWS is also a popular cloud provider for systems
+%that run in production environments.
+%
+%\hspace{2em}The results should provide a useful benchmarks of Kafka Streams and Apache Flink frameworks that were
+%stressed in a production-like environment.
+%For this case study a
+%Chaos Mesh was chosen for a chaos simulation and reducing worker replicas during execution of experiments.
+%Collected benchmarks like CPU consumption, network utilization, and time for a state recoverу give an understanding
+%about what framework to choose.
 
 
 %Software engineering is a diverse field that focuses on addressing various business domain problems.

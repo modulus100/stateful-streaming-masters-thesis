@@ -56,7 +56,7 @@
 %Stream processing
 
 
-\section{Background and motivation}\label{sec:back-and-motiv}
+\section{Background and Motivation}\label{sec:back-and-motiv}
 Software engineering is a diverse field that addresses various business domain problems.
 These domain-specific issues and their corresponding use cases necessitate in-depth analysis to determine the most suitable technologies for achieving optimal problem-solving outcomes.
 One rapidly growing area in software engineering is big data.
@@ -77,77 +77,74 @@ The use case considers that incoming events trigger state aggregation and re-com
 The ideal framework should address existing problems while offering excellent scalability, state recovery, and cost efficiency.
 
 \newpage
-\section{Problem statement}\label{sec:prob-st}
+\section{Problem Statement}\label{sec:prob-st}
 The problem comes with business demands that are based on current needs for a more scalable and efficient solution.
 Before getting into the problem details, the current model will be provided to better understand why this research
 brings value and how streaming frameworks are comparable with the batch processing model \ref{fig:current-model}.
 
-\subsection{Batch processing model overview}\label{subsec:current-model}
+\subsection{Batch Processing Model Overview}\label{subsec:current-model}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\textwidth]{figures/current-model-2}
-    \caption{\textit{Generic model of a data processing model which should be improved.}}
+    \caption{\textit{Generic model of a batch processing job that should replaced by stateful stream processing.}}
     \label{fig:current-model}
 \end{figure}
 
-The Figure \ref{fig:current-model} represents only a very generic model of the current
-system to just get some overview.
-The model contain the following components.
+%Compo.
 
 \begin{description}
-    \item[Kubernetes] manages life cycle of components like database and job \cite{kubernetes_intro}.
-    \item[Data course N] is an external component which sends a json messages in unbound mode.
-    Each data source is located in different external network and gets connected through
-    a network gateway before it reaches the job.
-    \item[Perdiodic batch processing job] represents a functionality block which uses queries to access the
-    data lake and save intermediate state to the state database.
-    The job represents an application written in highly-level object-oriented programming language
-    and works in a batch processing mode which means it gets launched periodically to process a batch of data records.
-    \item[State storage] contains a state for each executed query.
-    Contains an information from previous query executions.
-    \item[Database] is a storage with data records from all data sources.
+    \item[Kubernetes] Open source platform for managing containerized workloads and services \cite{kubernetes_intro}.
+    \item[Data course N] It is an external data source component that sends a json records as unbounded stream.
+    \item[Batch processing job] Represents a worker that executes queries in the databsase
+     and saves a query result as a state to the state database.
+    It runs with a predefined interval.
+    \item[State storage] Is a storage for states.
+    Each query has its own state.
+    \item[Database] Stores records from data sources.
 \end{description}
 
-From a first look, the system which is on the Figure \ref{fig:current-model} defines a straightforward
-architecture.
-Generally, the systems which implements such architecture are easily debuggable,
-testable and quite often is a good way to go when the project gets started.
-Everything might work smoothly for ages.
-At some moment in time, the system might face with a breaking point which brings new challenges.
+%From a first look, the system on the Figure \ref{fig:current-model} represens a straightforward
+%architecture.
+%Generally, the systems that implement such an architecture are easily debuggable,
+%testable and quite often are a good way to go when the project gets started.
+%Everything might work smoothly for ages.
+%At some moment in time, the system might face with a breaking point which brings new challenges.
+%
+%For example, in a few years, the number of data sources has significantly grown, where each
+%data source has its own sending frequency and a type.
+%A new load would require adding more and more instances of a job, faster period of job execution.
+%And also it leads to additional types of errors to handle, which haven't been seen before.
+%An execution of each query gets more expensive.
+%Not every data can be indexed, and especially if the amount of indexed data has grown in many times, it adds
+%a significant complexity overhead for a query execution.
+%Moreover, additional errors might and circumstances may get the service down, which requires
+%additional balancing logic and a state recovery.
+%It might take a significant time to recover a service in a specific region if this requires a manual work
+%from an engineering team.
 
-For example, in a few years, the number of data sources has significantly grown, where each
-data source has its own sending frequency and a type.
-A new load would require to add more and more instances of a job, faster period of job execution.
-And also it leads to additional types of errors to handle, which haven't been seen before.
-An execution of each query gets more expensive.
-Not every data can be indexed, and especially if amount of indexed data has grown in many times, it adds
-a significant complexity overhead for a query execution.
-Moreover, additional errors might and circumstances may get the service down, which requires
-additional balancing logic and a state recovery.
-At might take a significant time to recover a service in specific region if this requires a manual work
-from engineering team.
-
-As a summary, some crucial problems can be defined as follows.
+Some of the main disadvantages of the batch proccessing illustrated on Figure \ref{fig:current-model}l.
+New stateful stream processing with Kafka Stream and Apache Flink should overcome these disadvantages,
+and provide a brand-new solution to process unbound data streams.
 
 \begin{itemize}
     \item The system is not scalable enough.
-    \item A state is lost after recovery, not completely fault tolerant.
-    \item Expensive query execution, especially if data is not indexed
-    \item Job processing is periodic, leads to a latency and limitation in processing time.
+    \item The state gets lost it the job gets killed.
+    \item Periodic batch processing has higher latency compared to stream proccesig that is designed to
+    proccess data in real time with a minimal latency.
 \end{itemize}
 
-\newpage
-\section{Research question and objectives}\label{sec:res-q-o}
+%\newpage
+\section{Research Question and Objectives}\label{sec:res-q-o}
 The main question is to figure out how different frameworks behave in case of fault tolerance,
-for example, if some processing replicas or workers are down.
+for example, if some processing replicas or workers get killed.
 How would load rebalancing work, how much delay would it create,
 and how long would it take for the system to restore a state?
 The research consists of several tasks.
 
 \begin{itemize}
     \item Create prototypes with Apache Flink and Kafka Streams.
-    \item Prepare cloud setup in order to make experiments repeatable.
+    \item Prepare cloud setup to make experiments repeatable.
     \item Define metrics and benchmarks.
     \item Execute experiments.
     \item Collect results for analysis.
@@ -155,43 +152,10 @@ The research consists of several tasks.
 \end{itemize}
 
 
-%\subsection{Alternative architectures}\label{subsec:alternative-architectures-and-frameworks}
-%Fortunately, similar problems have already known in IT industry and big players like Google, Microsoft
-%have invested enough resources.
-%Their research results lead to a stream processing.
-%Stream processing is tend to be as alternative for bach processing which works for most cases, but
-%this specific use case if focused on real time data.
-%Once it's clear that stream processing is the way to go then comes a next question.
-%Another solution is to come up with a custom solution.
-%However, the most significant disadvantages include:
-%
-%\begin{itemize}
-%    \item A need to hire a team just to developer another stream processing framework.
-%    \item There's a big change that a custom solution won't perform better than existing.
-%    \item Long-term engineering support, such as bug fixes, integration with external dependencies,
-%    feature development.
-%    \item The cost can become prohibitive.
-%\end{itemize}
-%
-%
-%At the same time, the open source community is huge enough, which supports the greatest
-%open source products under The Apache Software Foundation.
-%The most significant disadvantages include:
-%
-%\begin{itemize}
-%    \item Industry standard frameworks.
-%    \item A huge support from developer around the world.
-%    \item An ease in extending already made code.
-%    \item Lots of ready for use tutorials and documentations.
-%    \item Many examples for different use cases.
-%\end{itemize}
-
-
-%\newpage
-\subsection{Selecting a suitable framework}\label{subsec:selecting-a-suitable-framework}
+\subsection{Selecting a Suitable Framework}\label{subsec:selecting-a-suitable-framework}
 They're lots different frameworks out there available for solving different
 data streaming problems.
-Most of the were born on top of each other as a new generation solution.
+Most of the frameworks were born on top of each other as a new generation solution \cite{fragkoulis2023survey}.
 Each new framework is trying to bring better performance and scalability.
 Down below is an evolution of streaming frameworks \cite{stream_processing_history} with a brief description:
 
@@ -230,12 +194,8 @@ Down below is an evolution of streaming frameworks \cite{stream_processing_histo
 
 However, for this study Apache Flink and Kafka streams were chosen as most popular real-time processing
 framework which do not use micro-batching.
-%Also, both have a great open source community support.
-%However, some companies fork these projects to add additional features for their use cases
-%\cite{stream_processing_frameworks_overview}, \cite{flink2019}, \cite{kafka2020},
-%\cite{kleppmann2017}, \cite{kleppmann2016making}.
 
-\subsection{Deployment environment}\label{subsec:deployment-environment}
+\subsection{Deployment Environment}\label{subsec:deployment-environment}
 In 2024, the most popular and advanced application container manager is Kubernetes.
 First, stream processing frameworks were designed to be run on YARN clusters.
 YARN is no longer considered to be the preferred deployment manager.
@@ -243,26 +203,23 @@ It means that a framework must be able to run in Kubernetes using containers.
 All experiments for this study were conducted with an AWS cloud provider.
 
 
-\subsection{Requirements summary}\label{subsec:final-requirements}
-At the moment, there are two leading frameworks are available which
-should help to build efficient and reliable solution, and
-they are Apache Flink and Kafka Streams.
-Both are designed for data streaming problems, have a large community support.
-More detailed comparison will are described in the next section.
+\subsection{Requirements Summary}\label{subsec:final-requirements}
+Apache Flink and Kafka Streams are two leading stream processing frameworks
+that are used in prototypes.
 
 As a summary, these important bullet points provided down below which will
 be considered during the evaluation for the new solution.
 
 \begin{description}
     \item[Scalability] The current is not scalable enough.
-    \item[Fault tolerance] A state must not be lost if a pod where job is running got down,
-    the system should be able to proceed processing with previous state once job is recovered.
+    \item[Fault tolerance] A state must not be lost if a pod where a running job gets killed.
+    The system should be able to proceed stream processing with previous state once job is restarted.
     \item[Simple integration] A solution, weather it is a programming language,
     or framework, should be compatible with the current technology stack, such as JVM and Kubernetes.
     It also means that a solution won't require hiring an entire engineering department or a team.
     \item[Cost effecienty] It's quite important that a highly loaded solution doesn't cost too much.
     \item[Cloud independence] A solution must not depend on a cloud provider.
-    \item[Functionality] A solution has to have an API which allows to implement and test a considered use case.
+    \item[Functionality] A solution has to have an API that allows to implement and test a considered use case.
 \end{description}
 
 

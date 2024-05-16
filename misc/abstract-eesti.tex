@@ -1,3 +1,24 @@
-[YOUR TEXT GOES HERE]
+Reaalajas töödeldavate andmemahtude kiire kasv toob kaasa
+väljakutseid arhitektuursete otsuste tegemiseks seoses sobiva voogedastustehnoloogia valikuga.
+Voogtöötlus on paradigma, mis keskendub pidevate ja piiritlemata andmevoogude töötlemisele reaalajas.
+Sellised raamistikud nagu Kafka Streams, Apache Flink ja Apache Spark on loodud veatolerantseks skaleeritavaks andmetöötluseks.
+Need raamistikud pakuvad graafipõhist andmete segamist, et tagada paindlik ja hajutatud andmetöötlus.
 
-Lõputöö on kirjutatud [mis keeles] keeles ning sisaldab teksti [lehekülgede arv] leheküljel, [peatükkide arv] peatükki, [jooniste arv] joonist, [tabelite arv] tabelit.
+Selles uuringus on välja töötatud kaks prototüüpi, mis kasutavad reeglipõhist sobitamisteenust,
+et demonstreerida väljapakutud lähenemisviisi tõhusust hajutatud keskkonnas.
+Reeglipõhine sobitamisteenus toodab märgistatud andmekirjeid, kus iga märgistatud kirje on unikaalne olek.
+Peamine eesmärk on välja selgitada, kui tõhusalt raamistikud taastavad oleku ootamatute rikete korral kõrge koormuse all.
+Uuring hõlmab nelja eksperimendi seeriat, keskendudes süsteemide jõudlusele erinevate rikete stsenaariumide korral,
+kasutades automaatset rikete simulaatorit Chaos Mesh.
+
+Iga eksperiment hõlmab replikaatide rikete automaatset simuleerimist: esimeses eksperimendis 2 kaheksast replikast ja teises eksperimendis kõik töötajate replikad.
+Katse ülesehitus töötleb 200 000 1-kilobaidist kirjet sekundis, kus kirjed pärinevad Kafka klastrist.
+Kõik eksperimendid viiakse läbi Amazon Elastic Kubernetes Service (EKS) keskkonnas AWSi
+pilves. Iga eksperimendi juurde kuulub hulk mõõdikuid, nagu sisendi läbilaskevõime,
+väljundi läbilaskevõime, mahajäämus ja protsessori kasutamine, et analüüsida automaatsete
+rikete korral toimuvaid tasakaalustamisprotsesse.
+
+Katsetulemused näitavad, et Apache Flinkil põhinev prototüüp töötab madalama latentsusega ja kiirema oleku taastamisega.
+Uuringus viidatakse varasematele töödele, mis näitavad Apache Flinki paremat jõudlust.
+
+Lõputöö on kirjutatud inglise keeles ning sisaldab teksti 67 leheküljel, 6 peatükki, 38 joonist.

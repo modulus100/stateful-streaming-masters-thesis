@@ -16,10 +16,10 @@ Both prototypes based on Kafka Streams and Apache Flink use the same Kafka recor
 commit time which is 2 seconds for all experiments.
 Such record commit time is supposed to achieve similar stateful streaming behavior
 for both prototypes.
-For this case study were chosen two main scenarios, when 2 of 8 cluster workers are down for
-a short period and when all workers 8 of 8 are down.
+For this case study were chosen two main scenarios, when 2 of 8 cluster workers are killed for
+a short period and when all workers 8 of 8 are killed.
 Such scenarios should give an overview about how two systems behave if part of workers
-get down and a whole worker cluster.
+get killed and a whole worker cluster.
 
 
 \begin{itemize}
@@ -62,7 +62,7 @@ For each experiment were chosen the following parameters:
 Definitions of vertical red and green lines.
 
 \begin{description}
-    \item[Red vertical line] moment when workers get down by Chaos Mesh.
+    \item[Red vertical line] moment when workers get killed by Chaos Mesh.
     \item[Green vertical line] moment when the system produces the expected output record rate that is
     100k records per second.
 \end{description}
@@ -138,7 +138,9 @@ The average time from a fault to a normal execution state is about 143 seconds.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/kstreams-2pods/kafka_2_pods_resources}
-    \caption{\textit{Resources consumption during a state recovery in case of 2 worker failures.}}
+    \caption{\textit{Resources consumption during rebalancing a state recovery in case of 2 worker failures.
+    Red vertical line denote a start of a fault, and the green vertical line is when the system gets back to normal
+    state.}}
     \label{fig:kafka-2pods-resource}
 \end{figure}
 
@@ -167,7 +169,8 @@ for Lag Trend and Lag Trend per Partition.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\textwidth]{figures/kstreams-8pods/kafka_8_pods_resources}
-    \caption{\textit{Resources consumption during a state recovery in case of 8 worker failures in a cluster of 8 workers.}}
+    \caption{\textit{Resources consumption during rebalancing and a state recovery in case of all workers failure.
+    Red vertical line denote a start of a fault, and the green vertical line is when the system gets back to normal state.}}
     \label{fig:kafka-8pods-resource}
 \end{figure}
 
@@ -178,7 +181,7 @@ for Lag Trend and Lag Trend per Partition.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{figures/flink/flink-shuffle-workers}
+    \includegraphics[width=1\textwidth]{figures/flink-shuffle}
     \caption{\textit{Illustrative example of Apache Flink workers for stateful stream processing.
     implemented prototype also includes record match service between input and grouping blocks.}}
     \label{fig:flink-workers-general}
@@ -212,7 +215,8 @@ The average time from a fault to a normal execution state is about 113 seconds.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\textwidth]{figures/flink-2pods/flink_2_pods_resources}
-    \caption{\textit{Resources consumption during a state recovery in case of 2 worker failures.}}
+    \caption{\textit{Resources consumption during balancing and a state recovery in case of 2 worker failures.
+    Red vertical line denote a start of a fault, and the green vertical line is when the system gets back to normal state.}}
     \label{fig:flink-2pods-resource}
 \end{figure}
 
@@ -239,19 +243,20 @@ with 2 workers on Figure \ref{fig:flink-2pods-impact}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/flink-8pods/flink_8_pods_resources}
-    \caption{\textit{Resources consumption during a state recovery in case of 8 worker failures.}}
+    \caption{\textit{Resources consumption during balancing and a state recovery in case of 8 worker failures.
+    Red vertical line denote a start of a fault, and the green vertical line is when the system gets back to normal state.}}
     \label{fig:flink-8pods-resource}
 \end{figure}
 
 
 \newpage
-\section{Comparative analysis}\label{subsec:comparative-analysis}
+\section{Comparative Analysis}\label{subsec:comparative-analysis}
 This section is comparing Apache Flink and Kafka Streams benchmarks
 on the same chart to observe a behavior difference in two systems.
 Important notice, workers failures happened in different moments since
 for Kafka Streams and Flink, due to Chaos Mesh cron jobs.
 
-\subsection{Input throughput}\label{subsec:input-throughtput}
+\subsection{Input Throughput}\label{subsec:input-throughtput}
 
 \begin{figure}[H]
     \centering
@@ -280,7 +285,7 @@ and on Figures \ref{fig:kafka-2pods-resource} \ref{fig:kafka-8pods-resource} for
 show that Flink workers get started faster.
 
 
-\subsection{Output throughput}\label{subsec:output-throughtput}
+\subsection{Output Throughput}\label{subsec:output-throughtput}
 
 \begin{figure}[H]
     \centering
@@ -315,7 +320,7 @@ Flink is able to start processing records sooner, for this reason, Flink needs t
 process less uncommited records.
 
 \newpage
-\subsection{Lag trend}\label{subsec:lag-trend}
+\subsection{Lag Trend}\label{subsec:lag-trend}
 Lag trend metric is described in the benchmarks section \ref{subsec:definition-of-benchmarks}.
 
 \begin{figure}[H]
@@ -366,7 +371,7 @@ Kafka Streams workers show higher downtime.
 
 
 \newpage
-\subsection{Network traffic}\label{subsec:inbound-network}
+\subsection{Network Traffic}\label{subsec:inbound-network}
 
 \begin{figure}[H]
     \centering
@@ -409,3 +414,8 @@ Kafka Streams uses higher network to process faster uncommited records during th
 Output record rate on Figure  \ref{fig:kafka-8pods-impact} is higher to due to longer downtime for
 Kafka Streams workers.
 However, Flink workers show high spikes in case of 2 worker failures, but for a shorter period.
+
+%\begin{description}
+%    \item[Workers] 8 replicas
+%    \item[Experiment execution time] 18 minutes
+%\end{description}
